@@ -184,7 +184,7 @@ struct CarState {
   steeringTorque @8 :Float32;      # TODO: standardize units
   steeringTorqueEps @27 :Float32;  # TODO: standardize units
   steeringPressed @9 :Bool;        # if the user is using the steering wheel
-  steeringRateLimited @29 :Bool;   # if the torque is limited by the rate limiter
+  
   steerFaultTemporary @35 :Bool;   # temporary EPS fault
   steerFaultPermanent @36 :Bool;   # permanent EPS fault
   stockAeb @30 :Bool;
@@ -285,6 +285,7 @@ struct CarState {
 
   errorsDEPRECATED @0 :List(CarEvent.EventName);
   brakeLights @19 :Bool;
+  steeringRateLimited @29 :Bool;   # if the torque is limited by the rate limiter
 }
 
 # ******* radar state @ 20hz *******
