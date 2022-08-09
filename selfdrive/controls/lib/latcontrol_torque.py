@@ -80,7 +80,7 @@ class LatControlTorque(LatControl):
       #speed_factor = interp(CS.vEgo, [10, 20, 30, 40], [500, 300, 100, 0]) # neokii c3
       #speed_factor = interp(CS.vEgo, [0, 15], [500, 0]) # comma 1st
       #speed_factor = interp(CS.vEgo, [0, 10, 20], [500, 500, 200]) # comma 2nd
-      #speed_factor = interp(CS.vEgo, [0, 20, 30, 40], [200, 100, 50, 0]) # test 20=45mile, 30=67mile, 40=90mile
+      #speed_factor = interp(CS.vEgo, [0, 20, 30, 40], [200, 100, 50, 0]) # test 15=34mile (54km) 20=45mile(72km), 30=67mile(108), 40=90mile(144)
       speed_factor = interp(CS.vEgo, [0, 20], [200, 0]) # test
 
       setpoint = desired_lateral_accel + speed_factor * desired_curvature
