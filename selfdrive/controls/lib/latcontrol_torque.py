@@ -79,7 +79,10 @@ class LatControlTorque(LatControl):
 
       #speed_factor = interp(CS.vEgo, [10, 20, 30, 40], [500, 300, 100, 0]) # neokii c3
       #speed_factor = interp(CS.vEgo, [0, 15], [500, 0]) # comma 1st
+      #speed_factor = interp(CS.vEgo, [0, 10, 20], [500, 500, 200]) # comma 2nd
+      #speed_factor = interp(CS.vEgo, [0, 20, 30, 40], [200, 100, 50, 0]) # test 20=45mile, 30=67mile, 40=90mile
       speed_factor = interp(CS.vEgo, [0, 20], [200, 0]) # test
+
       setpoint = desired_lateral_accel + speed_factor * desired_curvature
       measurement = actual_lateral_accel + speed_factor * actual_curvature
       error = setpoint - measurement
@@ -95,7 +98,13 @@ class LatControlTorque(LatControl):
 
       ff = desired_lateral_accel - params.roll * ACCELERATION_DUE_TO_GRAVITY
       # convert friction into lateral accel units for feedforward
-      friction_compensation = interp(apply_deadzone(error, lateral_accel_deadzone), [-FRICTION_THRESHOLD, FRICTION_THRESHOLD], [-self.friction, self.friction])
+
+      #콤마 두번째 60~65km 사이에서 핸들 흔들림.
+      #friction_compensation = interp(apply_deadzone(error, lateral_accel_deadzone), [-FRICTION_THRESHOLD, FRICTION_THRESHOLD], [-self.friction, self.friction])
+      
+      #콤마 첫번째 
+      friction_compensation = interp(error, [-FRICTION_THRESHOLD, FRICTION_THRESHOLD], [-self.friction, self.friction])
+      
       ff += friction_compensation / self.kf
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
       output_torque = self.pid.update(error, error_rate,
