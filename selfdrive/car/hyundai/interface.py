@@ -83,7 +83,7 @@ class CarInterface(CarInterfaceBase):
 
 
     ret.steerRatio = 16.5
-    ret.lateralTuning.torque.kd = 0.01 #Default = 0.0
+    ret.lateralTuning.torque.kd = 0.0 #Default = 0.0
     ret.lateralTuning.torque.steeringAngleDeadzoneDeg = 1.0
 
     ret.steerActuatorDelay = 0.1  # Default delay

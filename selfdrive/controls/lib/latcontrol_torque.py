@@ -79,7 +79,7 @@ class LatControlTorque(LatControl):
 
       #speed_factor = interp(CS.vEgo, [10, 20, 30, 40], [500, 300, 100, 0]) # neokii c3
       #speed_factor = interp(CS.vEgo, [0, 15], [500, 0]) # comma 1st
-      speed_factor = interp(CS.vEgo, [0, 20], [200, 0]) # comma 1st
+      speed_factor = interp(CS.vEgo, [0, 20], [200, 0]) # test
       setpoint = desired_lateral_accel + speed_factor * desired_curvature
       measurement = actual_lateral_accel + speed_factor * actual_curvature
       error = setpoint - measurement
