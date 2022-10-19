@@ -262,7 +262,7 @@ class CarController:
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
         faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
-        accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
+        #accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
         radar_recog = (0 < CS.lead_distance <= 149)
 
         if 0 < CS.lead_distance <= 149:
