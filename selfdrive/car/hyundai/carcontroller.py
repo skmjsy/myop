@@ -76,8 +76,13 @@ class CarController:
     self.stopsign_enabled = self.params.get_bool("StopAtStopSign")
 
     #opkr
+    self.stopped = False
     self.smooth_start = False
     self.change_accel_fast = False
+    self.dRel = 0
+    self.vRel = 0
+    self.yRel = 0
+    self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
 
     self.scc_smoother = SccSmoother()
     self.last_blinker_frame = 0
@@ -232,6 +237,11 @@ class CarController:
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     if self.longcontrol and CS.cruiseState_enabled and (CS.scc_bus or not self.scc_live):
+
+      self.sm.update(0)
+      self.dRel = self.sm['radarState'].leadOne.dRel #EON Lead
+      self.vRel = self.sm['radarState'].leadOne.vRel #EON Lead
+      self.yRel = self.sm['radarState'].leadOne.yRel #EON Lead
 
       if self.frame % 2 == 0:
 
