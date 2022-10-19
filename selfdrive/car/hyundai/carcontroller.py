@@ -73,7 +73,7 @@ class CarController:
     self.stock_navi_decel_enabled = param.get_bool('StockNaviDecelEnabled')
     self.keep_steering_turn_signals = param.get_bool('KeepSteeringTurnSignals')
     self.haptic_feedback_speed_camera = param.get_bool('HapticFeedbackWhenSpeedCamera')
-    self.stopsign_enabled = self.params.get_bool("StopAtStopSign")
+    self.stopsign_enabled = param.get_bool("StopAtStopSign")
 
     #opkr
     self.stopped = False
