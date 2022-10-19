@@ -93,6 +93,7 @@ def manager_init() -> None:
     ("AutoCruiseSetDependsOnNda", "0"),
     ("OPKRServer", "0"),
     ("UseBaseTorqueValues", "1"),
+    ("StopAtStopSign", "0"),
 
     #nPilot_Manager
     ("UseNpilotManager", "0"),
@@ -101,7 +102,7 @@ def manager_init() -> None:
     ("SpeedLimitControl", "0"),
     ("SpeedLimitPercOffset", "0"),
     ("TurnSpeedControl", "0"),
-    ("TurnVisionControl", "1"),
+    ("TurnVisionControl", "0"),
 
 
   ]

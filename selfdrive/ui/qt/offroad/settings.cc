@@ -2215,6 +2215,12 @@ CommunityPanel::CommunityPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));                                            
 
+  toggles.append(new ParamControl("StopAtStopSign",
+                                  "Stop at Stop Sign",
+                                  "Openpilot tries to stop at stop sign.",
+                                  "../assets/offroad/icon_road.png",
+                                  this));   
+
   toggles.append(new ParamControl("SccSmootherSyncGasPressed",
                                             "Sync set speed on gas pressed",
                                             "",
