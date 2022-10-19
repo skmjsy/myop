@@ -5,18 +5,18 @@ from common.numpy_fast import interp
 from common.params import Params
 from common.realtime import sec_since_boot
 from common.conversions import Conversions as CV
-from selfdrive.controls.lib.lateral_planner import TRAJECTORY_SIZE
+from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
 
 _MIN_V = 5.6  # Do not operate under 20km/h
 
-_ENTERING_PRED_LAT_ACC_TH = 1.3  # Predicted Lat Acc threshold to trigger entering turn state.
+_ENTERING_PRED_LAT_ACC_TH = 1.4  # Predicted Lat Acc threshold to trigger entering turn state. //default 1.3 
 _ABORT_ENTERING_PRED_LAT_ACC_TH = 1.1  # Predicted Lat Acc threshold to abort entering state if speed drops.
 
-_TURNING_LAT_ACC_TH = 1.6  # Lat Acc threshold to trigger turning turn state.
+_TURNING_LAT_ACC_TH = 1.4  # Lat Acc threshold to trigger turning turn state. //default 1.6 : not working, 1.4 : working
 
-_LEAVING_LAT_ACC_TH = 1.3  # Lat Acc threshold to trigger leaving turn state.
+_LEAVING_LAT_ACC_TH = 1.2  # Lat Acc threshold to trigger leaving turn state. //default 1.3 : too long
 _FINISH_LAT_ACC_TH = 1.1  # Lat Acc threshold to trigger end of turn cycle.
 
 _EVAL_STEP = 5.  # mts. Resolution of the curvature evaluation.
@@ -97,8 +97,7 @@ class VisionTurnController():
     self._CP = CP
     self._op_enabled = False
     self._gas_pressed = False
-#    self._is_enabled = self._params.get_bool("TurnVisionControl")
-    self._is_enabled = True
+    self._is_enabled = self._params.get_bool("TurnVisionControl")
     self._last_params_update = 0.
     self._v_cruise_setpoint = 0.
     self._v_ego = 0.
@@ -146,7 +145,7 @@ class VisionTurnController():
   def _update_params(self):
     time = sec_since_boot()
     if time > self._last_params_update + 5.0:
-      self._is_enabled = True # self._params.get_bool("TurnVisionControl")
+      self._is_enabled = self._params.get_bool("TurnVisionControl")
       self._last_params_update = time
 
   def _update_calculations(self, sm):

@@ -97,6 +97,12 @@ def manager_init() -> None:
     #nPilot_Manager
     ("UseNpilotManager", "0"),
 
+    #sunny Speed Control
+    ("SpeedLimitControl", "0"),
+    ("SpeedLimitPercOffset", "0"),
+    ("TurnSpeedControl", "0"),
+    ("TurnVisionControl", "1"),
+
 
   ]
   if not PC:
