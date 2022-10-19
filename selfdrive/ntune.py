@@ -269,6 +269,8 @@ class nTune():
     if self.checkValue("COMFORT_BRAKE", 2.0, 3.0, 2.5):
       updated = True
 
+    if self.checkValue("X_EGO_OBSTACLE_COST", 3.0, 7.0, 3.0):
+      updated = True
 
     return updated
 
