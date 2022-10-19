@@ -371,6 +371,8 @@ C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
   ipaddress = new LabelControl("IP Address", "");
   list->addItem(ipaddress);
 
+  list->addItem(new HotspotOnBootToggle());
+
   // SSH key management
   list->addItem(new SshToggle());
   list->addItem(new SshControl());

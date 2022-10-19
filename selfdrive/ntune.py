@@ -297,6 +297,9 @@ class nTune():
   def checkValidOption(self):
     updated = False
 
+    if self.checkValue("OpkrHotspotOnBoot", 0., 1., 0.):
+      updated = True
+
     if self.checkValue("autoEnable", 0., 1., 0.):
       updated = True
 

@@ -94,6 +94,7 @@ def manager_init() -> None:
     ("OPKRServer", "0"),
     ("UseBaseTorqueValues", "1"),
     ("StopAtStopSign", "0"),
+    ("OpkrHotspotOnBoot", "0"),
 
     #nPilot_Manager
     ("UseNpilotManager", "0"),
