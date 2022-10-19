@@ -14,7 +14,7 @@ from common.conversions import Conversions as CV
 from common.params import Params
 from selfdrive.controls.lib.longcontrol import LongCtrlState
 from selfdrive.road_speed_limiter import road_speed_limiter_get_active
-from selfdrive.ntune import ntune_option_enabled
+from selfdrive.ntune import ntune_scc_get
 
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 VisualAlert = car.CarControl.HUDControl.VisualAlert
@@ -76,11 +76,12 @@ class CarController:
     self.haptic_feedback_speed_camera = param.get_bool('HapticFeedbackWhenSpeedCamera')
 
     # npilot_manager
-    if param.get_bool("UseNpilotManager"):
-      self.auto_enabled = ntune_option_enabled('StopAtStopSign')
-    #opkr
-    else:
-      self.stopsign_enabled = param.get_bool("StopAtStopSign")
+    #if param.get_bool("UseNpilotManager"):
+    #  self.stopsign_enabled = ntune_scc_get('StopAtStopSign')
+    #else:
+    #  self.stopsign_enabled = param.get_bool("StopAtStopSign")
+
+    self.stopsign_enabled = ntune_scc_get('StopAtStopSign')
 
     #opkr
     self.stopped = False

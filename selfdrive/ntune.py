@@ -272,6 +272,12 @@ class nTune():
     if self.checkValue("X_EGO_OBSTACLE_COST", 3.0, 7.0, 3.0):
       updated = True
 
+    if self.checkValue("StopAtStopSign", 0., 1., 1.):
+      updated = True
+
+    if self.checkValue("StopLine", 0., 1., 1.):
+      updated = True
+
     return updated
 
   def checkValidLQR(self):
@@ -290,9 +296,6 @@ class nTune():
 
   def checkValidOption(self):
     updated = False
-
-    if self.checkValue("StopAtStopSign", 0., 1., 1.):
-      updated = True
 
     if self.checkValue("autoEnable", 0., 1., 0.):
       updated = True
