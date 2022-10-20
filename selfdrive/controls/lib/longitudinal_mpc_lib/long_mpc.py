@@ -329,6 +329,13 @@ class LongitudinalMpc:
     self.comfort_brake = COMFORT_BRAKE #apilot
 
     v_ego = self.x0[1]
+
+    xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
+    x = np.cumsum(np.insert(xforward, 0, x[0]))
+    self.yref[:,1] = x
+    self.yref[:,2] = v
+    self.yref[:,3] = a
+
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
