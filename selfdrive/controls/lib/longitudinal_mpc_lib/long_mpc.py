@@ -221,7 +221,6 @@ class LongitudinalMpc:
     self.stop_prob = 0.0
     self.on_stopping = False
     self.stop_line = ntune_scc_get("StopLine")
-    self.comfort_brake = COMFORT_BRAKE #apilot
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -245,7 +244,6 @@ class LongitudinalMpc:
     self.status = False
     self.crash_cnt = 0.0
     self.solution_status = 0
-    self.comfort_brake = COMFORT_BRAKE #apilot
     # timers
     self.solve_time = 0.0
     self.time_qp_solution = 0.0
@@ -326,8 +324,6 @@ class LongitudinalMpc:
     #opkr
     self.v_ego = carstate.vEgo
 
-    self.comfort_brake = COMFORT_BRAKE #apilot
-
     v_ego = self.x0[1]
 
     xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
@@ -392,7 +388,6 @@ class LongitudinalMpc:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline*0.2)+(x*0.8)])
     elif x[N] < 100 and self.on_stopping:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, x])
-      self.comfort_brake = 1.9 #apilot
     else:
       self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
@@ -403,7 +398,6 @@ class LongitudinalMpc:
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.param_tr
-    self.params[:,6] = self.comfort_brake #apilot
 
     #opkr
     self.e2e_x = x[:]
