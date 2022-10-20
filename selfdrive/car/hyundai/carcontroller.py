@@ -324,8 +324,6 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-
-              print("self.stopped : stopping" )
             #elif self.smooth_start and CS.clu_Vanz < setspeed:
               #apply_accel = interp(CS.clu_Vanz, [0, setspeed], [faccel, aReqValue])
             else:

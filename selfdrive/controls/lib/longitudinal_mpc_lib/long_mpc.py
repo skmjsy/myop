@@ -384,7 +384,7 @@ class LongitudinalMpc:
 
     if self.status and not self.on_stopping:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-    elif x[N] > 30 and stopline[N] < 30 and self.v_ego*CV.MS_TO_KPH < 30:
+    elif x[N] > 30 and stopline[N] < 30 and self.v_ego*CV.MS_TO_KPH < 20:
       self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
     elif x[N] < 100 and stopline[N] < 100:
