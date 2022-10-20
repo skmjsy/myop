@@ -320,15 +320,16 @@ class CarController:
               self.smooth_start = True
               #factor = ntune_scc_get('stopRate')
               #apply_accel = faccel if faccel <= -2.0 else faccel*factor
+            #elif self.smooth_start and CS.clu_Vanz < setspeed:
+              #apply_accel = interp(CS.clu_Vanz, [0, setspeed], [faccel, aReqValue])
               if stopping:
                 self.stopped = True
               else:
                 self.stopped = False
-            #elif self.smooth_start and CS.clu_Vanz < setspeed:
-              #apply_accel = interp(CS.clu_Vanz, [0, setspeed], [faccel, aReqValue])
             else:
               self.smooth_start = False
               apply_accel = last_accel
+
           else:
             apply_accel = last_accel
 
