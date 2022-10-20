@@ -88,6 +88,8 @@ protected:
   void drawDebugText(QPainter &p);
   void drawHud(QPainter &p);
 
+  int m_fps = 0;
+
 private:
   QPixmap get_icon_iol_com(const char* key);
   void drawRestAreaItem(QPainter &p, int yPos, capnp::Text::Reader image, capnp::Text::Reader title,

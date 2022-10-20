@@ -398,8 +398,9 @@ void NvgWindow::paintEvent(QPaintEvent *event) {
   double cur_draw_t = millis_since_boot();
   double dt = cur_draw_t - prev_draw_t;
   double fps = fps_filter.update(1. / dt * 1000);
+  m_fps = fps;
   if (fps < 15) {
-    LOGW("slow frame rate: %.2f fps", fps);
+    //LOGW("slow frame rate: %.2f fps", fps);
   }
   prev_draw_t = cur_draw_t;
 }
@@ -1331,5 +1332,9 @@ void NvgWindow::drawDebugText(QPainter &p) {
 
   y += height;
   str.sprintf("Lead: %.1f/%.1f/%.1f\n", radar_dist, vision_dist, (radar_dist - vision_dist));
+  p.drawText(text_x, y, str);
+
+  y += height;
+  str.sprintf("FPS: %d\n", m_fps);
   p.drawText(text_x, y, str);
 }
