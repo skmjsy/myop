@@ -401,13 +401,7 @@ class LongitudinalMpc:
       self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
 
-#    startSign = v[-1] > 2.0
-#    stopSign = self.on_stopping
-#    self.trafficState = 1 if stopSign else 2 if startSign else 0
-
-
-
-    self.source = SOURCES[np.argmin(x_obstacles[0])]
+    self.source = SOURCES[np.argmin(x_obstacles[N])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.param_tr

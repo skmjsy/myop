@@ -254,6 +254,9 @@ class CarController:
       if self.frame % 2 == 0:
 
         set_speed = hud_control.setSpeed
+
+        setspeed = round(set_speed * CV.MS_TO_KPH)
+
         if not (min_set_speed < set_speed < 255 * CV.KPH_TO_MS):
           set_speed = min_set_speed
         set_speed *= CV.MS_TO_MPH if CS.is_set_speed_in_mph else CV.MS_TO_KPH
@@ -266,8 +269,8 @@ class CarController:
 
         last_accel = apply_accel
 
+
         #opkr
-        lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
         faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
         #accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
@@ -315,9 +318,14 @@ class CarController:
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               self.smooth_start = True
-              apply_accel = faccel if faccel <= 0 else faccel*0.5
-            elif self.smooth_start and CS.clu_Vanz < set_speed:
-              apply_accel = interp(CS.clu_Vanz, [0, set_speed], [faccel, aReqValue])
+              #factor = ntune_scc_get('stopRate')
+              #apply_accel = faccel if faccel <= -2.0 else faccel*factor
+              if stopping:
+                self.stopped = True
+              else:
+                self.stopped = False
+            #elif self.smooth_start and CS.clu_Vanz < setspeed:
+              #apply_accel = interp(CS.clu_Vanz, [0, setspeed], [faccel, aReqValue])
             else:
               self.smooth_start = False
               apply_accel = last_accel
