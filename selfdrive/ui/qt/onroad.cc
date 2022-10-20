@@ -492,7 +492,7 @@ void NvgWindow::drawHud(QPainter &p) {
           drawStopLine(p, s, stop_line, s->scene.stop_line_vertices);
       }
   }
-  
+
   if(s->show_debug && width() > 1200)
     drawDebugText(p);
 
@@ -1251,7 +1251,7 @@ void NvgWindow::drawDebugText(QPainter &p) {
   const SubMaster &sm = *(uiState()->sm);
   QString str, temp;
 
-  int y = 80;
+  int y = 250;
   const int height = 60;
 
   const int text_x = width()/2 + 250;
