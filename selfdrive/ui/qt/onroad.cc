@@ -366,6 +366,17 @@ void NvgWindow::drawLead(QPainter &painter, const cereal::ModelDataV2::LeadDataV
   painter.drawPolygon(chevron, std::size(chevron));
 }
 
+void NvgWindow::drawStopLine(QPainter& painter, const UIState* s, const cereal::ModelDataV2::StopLineData::Reader &stop_line_data, const QPolygonF &vd) {
+    painter.save();
+
+    float prob = stop_line_data.getProb();
+    if (prob < 0.6) prob = 0.6;
+    painter.setBrush(QColor::fromRgbF(1.0, 0.0, 0.0, std::clamp<float>(prob, 0.0, 1.0)));
+    painter.drawPolygon(vd);
+   
+    painter.restore();
+}
+
 void NvgWindow::paintGL() {
 }
 
@@ -475,6 +486,13 @@ void NvgWindow::drawHud(QPainter &p) {
   drawTurnSignals(p);
   drawGpsStatus(p);
 
+  auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
+  if (stop_line.getX() > 3.0) {
+      if (stop_line.getProb() > .1) {
+          drawStopLine(p, s, stop_line, s->scene.stop_line_vertices);
+      }
+  }
+  
   if(s->show_debug && width() > 1200)
     drawDebugText(p);
 
