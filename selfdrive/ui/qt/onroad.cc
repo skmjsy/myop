@@ -521,6 +521,11 @@ void NvgWindow::drawHud(QPainter &p) {
       p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
   }
 
+  QString str;
+  str.sprintf("SL: %.0f CT : %.0f", lp.getStopLine(), lp.getCruiseTarget);
+  configFont(p, "Open Sans", 66, "Regular");
+  drawText(p, TRsign_x, 210, str, 200);
+
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
 
@@ -1252,7 +1257,7 @@ void NvgWindow::drawDebugText(QPainter &p) {
   const SubMaster &sm = *(uiState()->sm);
   QString str, temp;
 
-  int y = 250;
+  int y = 290;
   const int height = 60;
 
   const int text_x = width()/2 + 250;

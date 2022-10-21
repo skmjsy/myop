@@ -392,11 +392,6 @@ class LongitudinalMpc:
       self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
 
-    if stopSign:
-      print("KPH : ", self.v_ego*CV.MS_TO_KPH)
-      print("Stop line : ", stopline[N])
-      print("x : ", x[N])
-
     self.source = SOURCES[np.argmin(x_obstacles[N])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
