@@ -313,23 +313,23 @@ class CarController:
           self.stopped = False
           pass
         else:
-          self.stopped = False
-          if self.stopsign_enabled:
-            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              self.smooth_start = True
-              apply_accel = faccel if faccel <= 0 else faccel*0.5
-            elif self.smooth_start and CS.clu_Vanz < setSpeed:
-              apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
-            else:
-              self.smooth_start = False
-              apply_accel = last_accel
+          #self.stopped = False
+          #if self.stopsign_enabled:
+          #  if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+          #    self.smooth_start = True
+          #    apply_accel = faccel if faccel <= 0 else faccel*0.5
+          #  elif self.smooth_start and CS.clu_Vanz < setSpeed:
+          #    apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
+          #  else:
+          #    self.smooth_start = False
+          #    apply_accel = last_accel
               
-            if stopping:
-              self.stopped = True
-            else:
-              self.stopped = False
+          if stopping:
+            self.stopped = True
           else:
-            apply_accel = last_accel
+            self.stopped = False
+          #else:
+          #apply_accel = last_accel
 
         apply_accel = clip(apply_accel if CC.longActive else 0, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
