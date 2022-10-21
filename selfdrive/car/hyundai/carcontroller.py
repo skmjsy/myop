@@ -252,14 +252,14 @@ class CarController:
       self.yRel = self.sm['radarState'].leadOne.yRel #EON Lead
 
       if self.frame % 2 == 0:
-
         set_speed = hud_control.setSpeed
-
-        setspeed = round(set_speed * CV.MS_TO_KPH)
 
         if not (min_set_speed < set_speed < 255 * CV.KPH_TO_MS):
           set_speed = min_set_speed
         set_speed *= CV.MS_TO_MPH if CS.is_set_speed_in_mph else CV.MS_TO_KPH
+
+        #opkr
+        setSpeed = round(set_speed)
 
         stopping = controls.LoC.long_control_state == LongCtrlState.stopping
 
@@ -318,18 +318,18 @@ class CarController:
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               self.smooth_start = True
-              #factor = ntune_scc_get('stopRate')
-              #apply_accel = faccel if faccel <= -2.0 else faccel*factor
-            #elif self.smooth_start and CS.clu_Vanz < setspeed:
-              #apply_accel = interp(CS.clu_Vanz, [0, setspeed], [faccel, aReqValue])
-              if stopping:
-                self.stopped = True
-              else:
-                self.stopped = False
+              apply_accel = faccel if faccel <= 0 else faccel*0.5
+            elif self.smooth_start and CS.clu_Vanz < setSpeed:
+              apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
+
             else:
               self.smooth_start = False
               apply_accel = last_accel
-
+              
+            if stopping:
+              self.stopped = True
+            else:
+              self.stopped = False
           else:
             apply_accel = last_accel
 
