@@ -275,9 +275,6 @@ class nTune():
     if self.checkValue("StopAtStopSign", 0., 1., 1.):
       updated = True
 
-    if self.checkValue("StopLine", 0., 1., 1.):
-      updated = True
-
     return updated
 
   def checkValidLQR(self):

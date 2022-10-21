@@ -9,7 +9,5 @@
     "STOP_DISTANCE": 5.2,
     "COMFORT_BRAKE": 2.5,
     "X_EGO_OBSTACLE_COST": 5.0,
-    "StopAtStopSign": 1.0,
-    "StopLine": 1.0
-  
+    "StopAtStopSign": 1.0
 }

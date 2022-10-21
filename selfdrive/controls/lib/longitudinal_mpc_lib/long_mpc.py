@@ -220,7 +220,7 @@ class LongitudinalMpc:
     self.stopline = np.zeros(13, dtype=np.float64)
     self.stop_prob = 0.0
     self.on_stopping = False
-    self.stop_line = ntune_scc_get("StopLine")
+    self.stop_line = ntune_scc_get("StopAtStopSign")
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
