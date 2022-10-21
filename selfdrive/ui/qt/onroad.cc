@@ -524,9 +524,9 @@ void NvgWindow::drawHud(QPainter &p) {
   auto st = lp.getStopLine();
   auto ct = lp.getCruiseTarget();
   QString str;
-  str.sprintf("SL: %.0f CT : %.0f", st[12], ct[12]);
+  str.sprintf("SL: %.0f CT : %.0f", st[12], ct);
   configFont(p, "Open Sans", 66, "Regular");
-  drawText(p, TRsign_x, 210, st[12], 200);
+  drawText(p, TRsign_x, 210, str, 200);
 
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
