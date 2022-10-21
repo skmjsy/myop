@@ -374,7 +374,7 @@ class LongitudinalMpc:
                                v_upper)
     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
 
-    stopline = model.stopLine.x * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    stopline = model.stopLine.x * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     
     x = x[N] * np.ones(N+1)
 
