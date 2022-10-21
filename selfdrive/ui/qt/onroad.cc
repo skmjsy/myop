@@ -521,8 +521,10 @@ void NvgWindow::drawHud(QPainter &p) {
       p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
   }
 
+  auto st = lp.getStopLine();
+  auto ct = lp.getCruiseTarget();
   QString str;
-  str.sprintf("SL: %d CT : %d", lp.getStopLine(), lp.getCruiseTarget());
+  str.sprintf("SL: %d CT : %d", st[12], ct[12]);
   configFont(p, "Open Sans", 66, "Regular");
   drawText(p, TRsign_x, 210, str, 200);
 
