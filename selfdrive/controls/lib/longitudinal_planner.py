@@ -125,7 +125,7 @@ class Planner:
     self.cruise_source, a_min_sol, v_cruise_sol = self.cruise_solutions(not reset_state, self.v_desired_filter.x,
                                                                         self.a_desired, v_cruise, sm)
 
-    if force_slow_decel:
+    if force_slow_decel and False: # awareness decel is disabled for now:
       # if required so, force a smooth deceleration
       accel_limits_turns[1] = min(accel_limits_turns[1], AWARENESS_DECEL)
       accel_limits_turns[0] = min(accel_limits_turns[0], accel_limits_turns[1])
@@ -169,7 +169,7 @@ class Planner:
 
     longitudinalPlan.hasLead = sm['radarState'].leadOne.status
     #dp
-    longitudinalPlan.longitudinalPlanSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
+    longitudinalPlan.longitudinalPlanSource = self.mpc.source #if self.mpc.source != 'cruise' else self.cruise_source
     longitudinalPlan.visionTurnControllerState = self.vision_turn_controller.state
     longitudinalPlan.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
     longitudinalPlan.eventsDEPRECATED = self.events.to_msg()
