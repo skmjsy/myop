@@ -522,7 +522,7 @@ void NvgWindow::drawHud(QPainter &p) {
   }
 
   QString str;
-  str.sprintf("SL: %s CT : %s", lp.getStopLine(), lp.getCruiseTarget());
+  str.sprintf("SL: %d CT : %d", lp.getStopLine(), lp.getCruiseTarget());
   configFont(p, "Open Sans", 66, "Regular");
   drawText(p, TRsign_x, 210, str, 200);
 
