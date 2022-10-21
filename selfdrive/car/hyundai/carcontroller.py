@@ -269,7 +269,6 @@ class CarController:
 
         last_accel = apply_accel
 
-
         #opkr
         aReqValue = CS.scc12["aReqValue"]
         faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
@@ -321,7 +320,6 @@ class CarController:
               apply_accel = faccel if faccel <= 0 else faccel*0.5
             elif self.smooth_start and CS.clu_Vanz < setSpeed:
               apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
-
             else:
               self.smooth_start = False
               apply_accel = last_accel
