@@ -263,17 +263,11 @@ class CarController:
 
         stopping = controls.LoC.long_control_state == LongCtrlState.stopping
 
-        apply_accel = self.scc_smoother.get_apply_accel(CS, controls.sm, actuators.accel, stopping)
-        apply_accel = clip(apply_accel if CC.longActive else 0,
-                           CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
-
-        last_accel = apply_accel
-
         #opkr
         aReqValue = CS.scc12["aReqValue"]
+        apply_accel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
         faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
-        #accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
-        radar_recog = (0 < CS.lead_distance <= 149)
+        last_accel = apply_accel
 
         if 0 < CS.lead_distance <= 149:
           # neokii's logic, opkr mod
@@ -300,36 +294,37 @@ class CarController:
 
           apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
-        elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
-          apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
-          self.stopped = False
-        elif 0.1 < self.dRel < 6.0:
-          apply_accel = min(-0.5, faccel*0.3)
-          if stopping:
-            self.stopped = True
-          else:
-            self.stopped = False
-        elif 0.1 < self.dRel < 80:
-          self.stopped = False
-          pass
-        else:
-          #self.stopped = False
-          #if self.stopsign_enabled:
-          #  if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-          #    self.smooth_start = True
-          #    apply_accel = faccel if faccel <= 0 else faccel*0.5
-          #  elif self.smooth_start and CS.clu_Vanz < setSpeed:
-          #    apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
-          #  else:
-          #    self.smooth_start = False
-          #    apply_accel = last_accel
-              
-          if stopping:
-            self.stopped = True
-          else:
-            self.stopped = False
-          #else:
-          #apply_accel = last_accel
+#        elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
+#          apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+#          self.stopped = False
+#        elif 0.1 < self.dRel < 6.0:
+#          apply_accel = min(-0.5, faccel*0.3)
+#          if stopping:
+#            self.stopped = True
+#          else:
+#            self.stopped = False
+#        elif 0.1 < self.dRel < 80:
+#          self.stopped = False
+#          pass
+#        else:
+#          self.stopped = False
+#          if self.stopsign_enabled:
+#            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+#              self.smooth_start = True
+#              apply_accel = faccel if faccel <= 0 else faccel*0.5
+#            elif self.smooth_start and CS.clu_Vanz < setSpeed:
+#              apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
+#            else:
+#              self.smooth_start = False
+#              apply_accel = aReqValue
+#
+#            if stopping:
+#              self.stopped = True
+#            else:
+#              self.stopped = False
+#
+#          else:
+#            apply_accel = aReqValue
 
         apply_accel = clip(apply_accel if CC.longActive else 0, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
