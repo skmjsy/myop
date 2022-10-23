@@ -31,7 +31,7 @@ COST_E_DIM = 5
 COST_DIM = COST_E_DIM + 1
 CONSTR_DIM = 4
 
-X_EGO_OBSTACLE_COST = ntune_scc_get("X_EGO_OBSTACLE_COST") #3.
+X_EGO_OBSTACLE_COST = 3.
 X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
@@ -222,6 +222,7 @@ class LongitudinalMpc:
     self.on_stopping = False
     self.stop_line = ntune_scc_get("StopAtStopSign")
     self.xState = 0
+    self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -239,6 +240,7 @@ class LongitudinalMpc:
     self.u_sol = np.zeros((N,1))
     self.params = np.zeros((N+1, PARAM_DIM))
     self.param_tr = T_FOLLOW
+    self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
     for i in range(N+1):
       self.solver.set(i, 'x', np.zeros(X_DIM))
     self.last_cloudlog_t = 0
@@ -271,7 +273,7 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True):
     a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
-    cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, a_change_cost, J_EGO_COST]
+    cost_weights = [self.x_ego_obstacle_cost, X_EGO_COST, V_EGO_COST, A_EGO_COST, a_change_cost, J_EGO_COST]
     constraint_cost_weights = [LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST]
 
     self.set_cost_weights(cost_weights, constraint_cost_weights)
@@ -343,23 +345,26 @@ class LongitudinalMpc:
 
     self.param_tr = tr
 
-    #apilot
-    probe = model.stopLine.prob
-    startSign = v[-1] > 5.0
-    stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
-    self.trafficState = 1 if stopSign else 2 if startSign else 0
-
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
     # and then treat that as a stopped car/obstacle at this new distance.
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
-    stopline_x = (model.stopLine.x + 5.0)
-    probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
-    stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego * 0.95))
-    startSign = v[-1] > 5.0
+    # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
+    # when the leads are no factor.
+    v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
+    v_upper = v_ego + (T_IDXS * self.cruise_max_a * 1.05)
+    v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
+                                 v_lower,
+                                 v_upper)
 
+    #apilot
+    probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
+    startSign = v[-1] > 5.0
+    stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
+    stopline_x = (model.stopLine.x)
+    
     if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
       self.trafficState = 0 # "OFF"
       self.on_stopping = False
@@ -371,23 +376,28 @@ class LongitudinalMpc:
       self.on_stopping = False
 
     stopline = stopline_x * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
-    # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
-    # when the leads are no factor.
-    v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
-    v_upper = v_ego + (T_IDXS * self.cruise_max_a * 1.05)
-    v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
-                                 v_lower,
-                                 v_upper)
-    cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
+    
+    prev_accel_constraint = not (carstate.standstill)
 
     if self.status and not self.on_stopping:
+      self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
+      self.mpc.set_weights(prev_accel_constraint)
+      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+      self.source = SOURCES[np.argmin(x_obstacles[0])]
     elif self.on_stopping:
-       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline])
+      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      self.mpc.set_weights(prev_accel_constraint)
+      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline])
+      self.source = SOURCES[np.argmin(x_obstacles[N])]
     else:
+      self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
+      self.mpc.set_weights(prev_accel_constraint)
+      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+      self.source = SOURCES[np.argmin(x_obstacles[0])]
 
-    self.source = SOURCES[np.argmin(x_obstacles[N])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.param_tr
@@ -399,16 +409,6 @@ class LongitudinalMpc:
     self.cruise_target = cruise_obstacle[:]
     self.stopline = stopline[:]
     self.stop_prob = model.stopLine.prob
-
-    x[:], v[:], a[:], j[:] = 0.0, 0.0, 0.0, 0.0
-
-    self.yref[:,1] = x
-    self.yref[:,2] = v
-    self.yref[:,3] = a
-    self.yref[:,5] = j
-    for i in range(N):
-      self.solver.set(i, "yref", self.yref[i])
-    self.solver.set(N, "yref", self.yref[N][:COST_E_DIM])
 
     self.run()
     if (np.any(lead_xv_0[:,0] - self.x_sol[:,0] < CRASH_DISTANCE) and
