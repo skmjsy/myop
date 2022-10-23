@@ -321,7 +321,7 @@ class LongitudinalMpc:
     self.cruise_min_a = min_a
     self.cruise_max_a = max_a
 
-  def update(self, carstate, radarstate, model, v_cruise, x, v, a, j):
+  def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #apilot
     self.trafficState = 0
 
@@ -377,21 +377,22 @@ class LongitudinalMpc:
 
     stopline = stopline_x * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
     
-    prev_accel_constraint = not (carstate.standstill)
-
     if self.status and not self.on_stopping:
+      self.param_tr = tr
       self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
       self.mpc.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
       self.source = SOURCES[np.argmin(x_obstacles[0])]
     elif self.on_stopping:
+      self.param_tr = 0
       self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.mpc.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline])
       self.source = SOURCES[np.argmin(x_obstacles[N])]
     else:
+      self.param_tr = tr
       self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
       self.mpc.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)

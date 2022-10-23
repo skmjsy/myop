@@ -138,7 +138,7 @@ class Planner:
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     #dp
     x, v, a, j = self.parse_model(sm['modelV2'])
-    self.mpc.update(sm['carState'], sm['radarState'], sm['modelV2'], v_cruise_sol, x, v, a, j)
+    self.mpc.update(sm['carState'], sm['radarState'], sm['modelV2'], v_cruise_sol, x, v, a, j, prev_accel_constraint)
 
     self.v_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.a_solution)
