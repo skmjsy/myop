@@ -393,7 +393,7 @@ class LongitudinalMpc:
     stopline = (stopline_x) * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
     
-    if self.stop_line and not self.status and self.on_stopping and stopline[N] < 100:
+    if self.stop_line and not self.status and self.on_stopping and stopline_x < 100:
       self.param_tr = 0
       self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)
