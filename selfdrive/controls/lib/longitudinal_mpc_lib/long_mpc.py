@@ -390,8 +390,9 @@ class LongitudinalMpc:
       self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline*0.2)+(x*0.8)])
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, (stopline*0.2)+(x*0.8)])
       self.source = SOURCES[np.argmin(x_obstacles[N])]
+      print(self.source)
     else:
       self.param_tr = tr
       self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
