@@ -87,6 +87,7 @@ protected:
   void drawGpsStatus(QPainter &p);
   void drawDebugText(QPainter &p);
   void drawHud(QPainter &p);
+  void drawStoplineSignal(QPainter &p);
 
   int m_fps = 0;
 

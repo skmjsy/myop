@@ -382,18 +382,17 @@ class LongitudinalMpc:
     
     if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
       self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
-      self.on_stopping = False
     elif stopSign:
       self.trafficState = 1 # "RED"
-      self.on_stopping = True
     elif startSign:
       self.trafficState = 2 # "GREEN"
-      self.on_stopping = False
 
     stopline = (stopline_x) * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
+
+    self.on_stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
     
-    if self.stop_line and not self.status and self.on_stopping and stopline_x < 100:
+    if self.on_stopping:
       self.param_tr = 0
       self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)

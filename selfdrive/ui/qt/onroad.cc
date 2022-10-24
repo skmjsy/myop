@@ -486,13 +486,7 @@ void NvgWindow::drawHud(QPainter &p) {
   drawRestArea(p);
   drawTurnSignals(p);
   drawGpsStatus(p);
-
-  auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
-  if (stop_line.getX() > 3.0) {
-      if (stop_line.getProb() > .1) {
-          drawStopLine(p, s, stop_line, s->scene.stop_line_vertices);
-      }
-  }
+  drawStoplineSignal(p)
 
   if(s->show_debug && width() > 1200)
     drawDebugText(p);
@@ -502,32 +496,6 @@ void NvgWindow::drawHud(QPainter &p) {
   //const auto live_params = sm["liveParameters"].getLiveParameters();
   //const auto live_torque_params = sm["liveTorqueParameters"].getLiveTorqueParameters();
   //const auto torque_state = controls_state.getLateralControlState().getTorqueState();
-
-  const auto lp = sm["longitudinalPlan"].getLongitudinalPlan();
-
-  int trafficLight = 0;
-  int TRsign_w = 250;
-  int TRsign_h = 140;
-  int TRsign_x = 960 + 40 + TRsign_w;
-  int TRsign_y = 50;
-  if (lp.getTrafficState() == 2) {
-      trafficLight = 1;
-      p.setOpacity(0.8);
-      p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_green);
-  }
-  else if (lp.getTrafficState() == 1) {
-      trafficLight = 2;
-      p.setOpacity(0.8);
-      p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
-
-      if (stop_line.getX() <= 100) {
-        QString sltext;
-        QColor color = QColor(255, 255, 255, 230);
-        sltext.sprintf( "%d m", (int)(stop_line.getX()));
-        configFont(p, "Open Sans", 66, "Bold");
-        drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
-      }
-  }
 
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
@@ -554,6 +522,43 @@ void NvgWindow::drawHud(QPainter &p) {
   p.drawText(rect().left() + 20, rect().height() - 15, infoText);
 
   drawBottomIcons(p);
+}
+
+void NvgWindow::drawStoplineSignal(QPainter &p) {
+  const SubMaster &sm = *(s->sm);
+
+  auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
+  if (stop_line.getX() > 3.0) {
+      if (stop_line.getProb() > .1) {
+          drawStopLine(p, s, stop_line, s->scene.stop_line_vertices);
+      }
+  }
+
+  const auto lp = sm["longitudinalPlan"].getLongitudinalPlan();
+
+  int trafficLight = 0;
+  int TRsign_w = 250;
+  int TRsign_h = 140;
+  int TRsign_x = 960 + 40 + TRsign_w;
+  int TRsign_y = 50;
+  if (lp.getTrafficState() == 2) {
+      trafficLight = 1;
+      p.setOpacity(0.8);
+      p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_green);
+  }
+  else if (lp.getTrafficState() == 1) {
+      trafficLight = 2;
+      p.setOpacity(0.8);
+      p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
+
+      if (stop_line.getX() <= 100) {
+        QString sltext;
+        QColor color = QColor(255, 255, 255, 230);
+        sltext.sprintf( "%d m", (int)(stop_line.getX()));
+        configFont(p, "Open Sans", 66, "Bold");
+        drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
+      }
+  }
 }
 
 static const QColor get_tpms_color(float tpms) {
