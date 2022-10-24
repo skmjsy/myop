@@ -2218,8 +2218,8 @@ CommunityPanel::CommunityPanel(QWidget* parent) : QWidget(parent) {
                                   this));                                            
 
   toggles.append(new ParamControl("StopAtStopSign",
-                                  "Stop at Stop Sign",
-                                  "Openpilot tries to stop at stop sign.",
+                                  "Stop at Stop Light",
+                                  "Openpilot tries to stop at stop light.",
                                   "../assets/offroad/icon_road.png",
                                   this));   
 
