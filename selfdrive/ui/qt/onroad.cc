@@ -528,7 +528,7 @@ void NvgWindow::drawHud(QPainter &p) {
   QColor color = QColor(255, 255, 255, 230);
   sltext.sprintf( "%d m", (int)(stop_line.getX()));
   configFont(p, "Open Sans", 66, "Bold");
-  drawTextWithColor(p, TRsign_x + 40, TRsign_y + TRsign_h + 40, sltext, color);
+  drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
 
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
@@ -1261,7 +1261,7 @@ void NvgWindow::drawDebugText(QPainter &p) {
   const SubMaster &sm = *(uiState()->sm);
   QString str, temp;
 
-  int y = 280;
+  int y = 300;
   const int height = 60;
 
   const int text_x = width()/2 + 250;
