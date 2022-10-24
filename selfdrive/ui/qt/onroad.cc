@@ -526,9 +526,8 @@ void NvgWindow::drawHud(QPainter &p) {
 
   QString sltext;
   sltext.sprintf( "%d 123m", (int)(stop_line.getX()));
-  textColor = QColor(120, 255, 120, 200);
   configFont(p, "Open Sans", 176, "Bold");
-  drawTextWithColor(p, TRsign_x, TRsign_y + TRsign_h + 20, sltext, textColor);
+  drawTextWithColor(p, TRsign_x, TRsign_y + TRsign_h + 20, sltext, 200);
 
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
