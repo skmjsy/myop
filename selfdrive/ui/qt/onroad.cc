@@ -524,11 +524,13 @@ void NvgWindow::drawHud(QPainter &p) {
   p.setOpacity(0.8);
   p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
 
-  QString sltext;
-  QColor color = QColor(255, 255, 255, 230);
-  sltext.sprintf( "%d m", (int)(stop_line.getX()));
-  configFont(p, "Open Sans", 66, "Bold");
-  drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
+  if (stop_line.getX() <= 100) {
+    QString sltext;
+    QColor color = QColor(255, 255, 255, 230);
+    sltext.sprintf( "%d m", (int)(stop_line.getX()));
+    configFont(p, "Open Sans", 66, "Bold");
+    drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
+  }
 
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
