@@ -387,7 +387,7 @@ class LongitudinalMpc:
     elif startSign:
       self.trafficState = 2 # "GREEN"
 
-    stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
+    stopline = (stopline_x) * np.ones(N+1) if (self.trafficState == 1) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
 
     self.on_stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False

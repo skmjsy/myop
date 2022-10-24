@@ -560,6 +560,9 @@ void NvgWindow::drawStoplineSignal(QPainter &p) {
         drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
       }
   }
+
+  p.setOpacity(0.8);
+  p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
 }
 
 static const QColor get_tpms_color(float tpms) {
