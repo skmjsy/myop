@@ -525,7 +525,7 @@ void NvgWindow::drawHud(QPainter &p) {
   p.setPen(QColor(255, 255, 255, 180));
 
   configFont(p, "Inter", 50, "Bold");
-  str.sprintf( "%d", (int)(stop_line.getX()));
+  str.sprintf( "%d 123m", (int)(stop_line.getX()));
   p.drawText(TRsign_x, TRsign_y + TRsign_h + 20, TRsign_w, TRsign_y,  Qt::AlignCenter, str);
 
   int mdps_bus = car_params.getMdpsBus();
