@@ -560,9 +560,6 @@ void NvgWindow::drawStoplineSignal(QPainter &p) {
         drawTextWithColor(p, TRsign_x + 120, TRsign_y + TRsign_h + 60, sltext, color);
       }
   }
-
-  p.setOpacity(0.8);
-  p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
 }
 
 static const QColor get_tpms_color(float tpms) {
@@ -1277,6 +1274,7 @@ void NvgWindow::drawDebugText(QPainter &p) {
   auto controls_state = sm["controlsState"].getControlsState();
   auto car_control = sm["carControl"].getCarControl();
   auto car_state = sm["carState"].getCarState();
+  auto stop_line_dist = sm["modelV2"].getModelV2().getStopLine().getX();
 
   float applyAccel = controls_state.getApplyAccel();
 
@@ -1349,6 +1347,10 @@ void NvgWindow::drawDebugText(QPainter &p) {
 
   y += height;
   str.sprintf("Lead: %.1f/%.1f/%.1f\n", radar_dist, vision_dist, (radar_dist - vision_dist));
+  p.drawText(text_x, y, str);
+
+  y += height;
+  str.sprintf("Stop line dist: %.1f\n", stop_line_dist);
   p.drawText(text_x, y, str);
 
   y += height;
