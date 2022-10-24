@@ -297,18 +297,18 @@ class CarController:
 #        elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
 #          apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
 #          self.stopped = False
-#        elif 0.1 < self.dRel < 6.0:
+        elif 0.1 < self.dRel < 6.0:
 #          apply_accel = min(-0.5, faccel*0.3)
-#          if stopping:
-#            self.stopped = True
-#          else:
-#            self.stopped = False
+          if stopping:
+            self.stopped = True
+          else:
+            self.stopped = False
 #        elif 0.1 < self.dRel < 80:
 #          self.stopped = False
 #          pass
-#        else:
-#          self.stopped = False
-#          if self.stopsign_enabled:
+        else:
+          self.stopped = False
+          if self.stopsign_enabled:
 #            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
 #              self.smooth_start = True
 #              apply_accel = faccel if faccel <= 0 else faccel*0.5
@@ -318,13 +318,13 @@ class CarController:
 #              self.smooth_start = False
 #              apply_accel = aReqValue
 #
-#            if stopping:
-#              self.stopped = True
-#            else:
-#              self.stopped = False
+            if stopping:
+              self.stopped = True
+            else:
+              self.stopped = False
 #
-#          else:
-#            apply_accel = aReqValue
+          else:
+            apply_accel = aReqValue
 
         apply_accel = clip(apply_accel if CC.longActive else 0, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
