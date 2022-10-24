@@ -324,7 +324,7 @@ class LongitudinalMpc:
     self.cruise_max_a = max_a
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
-
+    #opkr
     self.lo_timer += 1
     if self.lo_timer > 200:
       self.lo_timer = 0
@@ -394,7 +394,7 @@ class LongitudinalMpc:
     stopline = (stopline_x) * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
     
-    if not self.status and self.on_stopping and stopline[N] < 100:
+    if self.stop_line and not self.status and self.on_stopping and stopline[N] < 100:
       self.param_tr = 0
       self.x_ego_obstacle_cost = x_ego_obstacle_cost  #ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)
