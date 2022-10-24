@@ -525,6 +525,7 @@ void NvgWindow::drawHud(QPainter &p) {
 }
 
 void NvgWindow::drawStoplineSignal(QPainter &p) {
+  UIState *s = uiState();
   const SubMaster &sm = *(s->sm);
 
   auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
