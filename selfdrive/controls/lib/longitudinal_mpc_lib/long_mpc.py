@@ -221,9 +221,9 @@ class LongitudinalMpc:
     self.stop_prob = 0.0
     self.on_stopping = False
     self.stop_line = ntune_scc_get("StopAtStopSign")
-    self.xState = 0
     self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
     self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    self.lo_timer = 0 
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -324,6 +324,13 @@ class LongitudinalMpc:
     self.cruise_max_a = max_a
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
+
+    self.lo_timer += 1
+    if self.lo_timer > 200:
+      self.lo_timer = 0
+      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+      x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+
     #apilot
     self.trafficState = 0
 
@@ -361,6 +368,13 @@ class LongitudinalMpc:
                                  v_lower,
                                  v_upper)
 
+    cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
+
+    self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
+    self.set_weights(prev_accel_constraint)
+    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+
+
     #apilot
     probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
     startSign = v[-1] > 5.0
@@ -368,7 +382,7 @@ class LongitudinalMpc:
     stopline_x = (model.stopLine.x)
     
     if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
-      self.trafficState = 0 # "OFF"
+      self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
       self.on_stopping = False
     elif stopSign:
       self.trafficState = 1 # "RED"
@@ -379,27 +393,13 @@ class LongitudinalMpc:
 
     stopline = (stopline_x) * np.ones(N+1) if (self.on_stopping) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
-
-    self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
-
-    if self.status and not self.on_stopping:
-      self.param_tr = tr
-      self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
-      self.set_weights(prev_accel_constraint)
-      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-    elif not self.status and self.on_stopping:
+    
+    if not self.status and self.on_stopping and stopline[N] < 100:
       self.param_tr = 0
-      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      self.x_ego_obstacle_cost = x_ego_obstacle_cost  #ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
-    else:
-      self.param_tr = tr
-      self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
-      self.set_weights(prev_accel_constraint)
-      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
 
     self.source = SOURCES[np.argmin(x_obstacles[N])]
 
