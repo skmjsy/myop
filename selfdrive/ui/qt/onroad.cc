@@ -521,6 +521,13 @@ void NvgWindow::drawHud(QPainter &p) {
       p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
   }
 
+  QString str;
+  p.setPen(QColor(255, 255, 255, 180));
+
+  configFont(p, "Inter", 50, "Bold");
+  str.sprintf( "%d", (int)(stop_line.getX()));
+  p.drawText(TRsign_x, TRsign_y + TRsign_h + 20, TRsign_w, TRsign_y,  Qt::AlignCenter, str);
+
   int mdps_bus = car_params.getMdpsBus();
   int scc_bus = car_params.getSccBus();
 
@@ -1326,17 +1333,12 @@ void NvgWindow::drawDebugText(QPainter &p) {
 
   auto lead_radar = sm["radarState"].getRadarState().getLeadOne();
   auto lead_one = sm["modelV2"].getModelV2().getLeadsV3()[0];
-  auto stopline_dist = sm["modelV2"].getModelV2().getStopLine().getX();
 
   float radar_dist = lead_radar.getStatus() && lead_radar.getRadar() ? lead_radar.getDRel() : 0;
   float vision_dist = lead_one.getProb() > .5 ? (lead_one.getX()[0] - 1.5) : 0;
 
   y += height;
   str.sprintf("Lead: %.1f/%.1f/%.1f\n", radar_dist, vision_dist, (radar_dist - vision_dist));
-  p.drawText(text_x, y, str);
-
-  y += height;
-  str.sprintf("Stopline: %.1f\n", stopline_dist);
   p.drawText(text_x, y, str);
 
   y += height;
