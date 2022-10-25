@@ -417,7 +417,7 @@ class LongitudinalMpc:
     stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    self.stop_line_offset = interp(self.v_ego, [0, 15, 30], [0.9, 0.8, 0.2]) #15m/s = 33mile 54km,  30m/s = 67mile 108km
+    self.stop_line_offset = interp(self.v_ego, [0, 15, 30], [0.9, 0.8, 0.2]) #15m/s = 33mph 54kph,  30m/s = 67mph 108kph
 
     if stopping:
       self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
@@ -425,7 +425,7 @@ class LongitudinalMpc:
 
     if self.status and not self.on_stopping:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-    elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:  # < 21.6kph
+    elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:  # < 13mph 21.6kph
       self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
     elif x[N] < 150 and stopline[N] < 150:
