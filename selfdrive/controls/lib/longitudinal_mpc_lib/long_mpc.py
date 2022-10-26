@@ -412,6 +412,7 @@ class LongitudinalMpc:
     #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.0, 1.55, 1.65, 2.0]) #KPH
     
     if not self.on_stopping:
+      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
       self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH
 
     if stopping:
