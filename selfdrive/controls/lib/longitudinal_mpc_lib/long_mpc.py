@@ -255,6 +255,7 @@ class LongitudinalMpc:
     self.time_linearization = 0.0
     self.time_integrator = 0.0
     self.x0 = np.zeros(X_DIM)
+    self.on_stopping = False
     self.set_weights()
 
   def set_cost_weights(self, cost_weights, constraint_cost_weights):
@@ -408,15 +409,20 @@ class LongitudinalMpc:
     #30m/s = 67mph 108kph
     #self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [1.0, 0.9, 0.8, 0.6, 0.4]) 
     #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 5, 15, 20, 25, 35, 40, 45, 50], [1.0, 1.10, 1.15, 1.25, 1.35, 1.45, 1.55, 1.65, 2.0]) #35mph-1.45, 40mph-1.55 tested.
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [1.0, 1.55, 1.65, 2.0]) 
+    #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.0, 1.55, 1.65, 2.0]) #KPH
+    
+    if not self.on_stopping:
+      self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH
 
     if stopping:
-     self.on_stopping = True
-     self.param_tr = 0
-     self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-     self.set_weights(prev_accel_constraint)
-     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-     x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stopline * self.stop_line_offset])
+      self.on_stopping = True
+      self.param_tr = 0
+      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      self.set_weights(prev_accel_constraint)
+      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
+    else:
+      self.on_stopping = False
 
     #opkr
     #####################################################################################################################
