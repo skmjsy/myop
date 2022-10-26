@@ -403,7 +403,7 @@ class LongitudinalMpc:
 
     #self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [1.0, 0.9, 0.8, 0.6, 0.4]) #10m/s = 22mph, 15m/s = 33mph 54kph, 20m/s = 45mph 72kph, 25m/s = 56mph, 30m/s = 67mph 108kph
     #self.stop_line_offset = interp(self.v_ego, [0, 5, 15, 20, 25, 35, 40, 45, 50], [1.0, 1.10, 1.15, 1.25, 1.35, 1.45, 1.55, 1.65, 2.0]) #
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 5, 15, 20, 25, 35, 40, 45, 50], [1.0, 1.10, 1.15, 1.25, 1.35, 1.45, 1.55, 1.65, 2.0]) #
+    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 5, 15, 20, 25, 35, 40, 45, 50], [1.0, 1.10, 1.15, 1.25, 1.35, 1.45, 1.55, 1.65, 2.0]) #35mph-1.45, 40mph-1.55 tested.
 
     if stopping:
      self.on_stopping = True
