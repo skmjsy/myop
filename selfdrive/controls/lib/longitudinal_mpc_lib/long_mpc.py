@@ -326,10 +326,10 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    self.lo_timer += 1
-    if self.lo_timer > 200:
-      self.lo_timer = 0
-      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    # self.lo_timer += 1
+    # if self.lo_timer > 200:
+    #   self.lo_timer = 0
+    #   self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
 
     #apilot
     self.trafficState = 0
@@ -417,7 +417,8 @@ class LongitudinalMpc:
     if stopping:
       self.on_stopping = True
       self.param_tr = 0
-      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      #self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
