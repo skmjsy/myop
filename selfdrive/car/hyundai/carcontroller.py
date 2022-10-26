@@ -309,10 +309,10 @@ class CarController:
         else:
           self.stopped = False
           if self.stopsign_enabled:
-            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
-                stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
-                apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+            # if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+            #   if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
+            #     stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
+            #     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
 #            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
 #              self.smooth_start = True

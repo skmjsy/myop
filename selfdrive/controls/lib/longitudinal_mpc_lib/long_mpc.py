@@ -397,45 +397,48 @@ class LongitudinalMpc:
     elif startSign:
       self.trafficState = 2 # "GREEN"
 
-    #stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
-    #x = (x[N]) * np.ones(N+1)
+    stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
+    x = (x[N]) * np.ones(N+1)
 
-    #self.on_stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
+    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
+
+    self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [1.0, 0.9, 0.8, 0.6, 0.4]) #10m/s = 22mph, 15m/s = 33mph 54kph, 20m/s = 45mph 72kph, 25m/s = 56mph, 30m/s = 67mph 108kph
     
-    #if self.on_stopping:
-    #  self.param_tr = 0
-    #  self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-    #  self.set_weights(prev_accel_constraint)
-    #  cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-    #  x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
+    if stopping:
+     self.on_stopping = True
+     self.param_tr = 0
+     self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+     self.set_weights(prev_accel_constraint)
+     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+     x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
 
 
     #opkr
     #####################################################################################################################
-    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status) else False
+    # stopping = True if (self.stop_line and self.trafficState == 1 and not self.status) else False
 
-    stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
-    x = (x[N] + 5.0) * np.ones(N+1)
+    # stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    # x = (x[N] + 5.0) * np.ones(N+1)
 
-    self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [0.9, 0.8, 0.6, 0.2, 0.0]) #15m/s = 33mph 54kph,  20m/s 45mph 72kph, 30m/s = 67mph 108kph
+    # #self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [0.9, 0.8, 0.6, 0.2, 0.0]) #15m/s = 33mph 54kph,  20m/s 45mph 72kph, 30m/s = 67mph 108kph
 
-    if stopping:
-      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-      self.set_weights(prev_accel_constraint)
+    # if stopping:
+    #   self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+    #   self.set_weights(prev_accel_constraint)
 
-    if self.status and not self.on_stopping:
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-    elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:  # < 13mph 21.6kph
-      self.on_stopping = False
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
-    elif x[N] < 150 and stopline[N] < 150:
-      self.on_stopping = True
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline*0.2)+(x*self.stop_line_offset)])
-    elif x[N] < 150 and self.on_stopping:
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, x])
-    else:
-      self.on_stopping = False
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+    # if self.status and not self.on_stopping:
+    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+    # elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:  # < 13mph 21.6kph
+    #   self.on_stopping = False
+    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
+    # elif x[N] < 150 and stopline[N] < 150:
+    #   self.on_stopping = True
+    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline*0.2)+(x*self.stop_line_offset)])
+    # elif x[N] < 150 and self.on_stopping:
+    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, x])
+    # else:
+    #   self.on_stopping = False
+    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
     #####################################################################################################################
 
     self.source = SOURCES[np.argmin(x_obstacles[N])]
