@@ -326,10 +326,10 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    # self.lo_timer += 1
-    # if self.lo_timer > 200:
-    #   self.lo_timer = 0
-    #   self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    self.lo_timer += 1
+    if self.lo_timer > 200:
+      self.lo_timer = 0
+      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
 
     #apilot
     self.trafficState = 0
@@ -411,18 +411,17 @@ class LongitudinalMpc:
     #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 5, 15, 20, 25, 35, 40, 45, 50], [1.0, 1.10, 1.15, 1.25, 1.35, 1.45, 1.55, 1.65, 2.0]) #35mph-1.45, 40mph-1.55 tested.
     #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.0, 1.55, 1.65, 2.0]) #KPH
     
-    if not self.on_stopping:
+    #if not self.on_stopping:
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
-      self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH
+      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
 
     if stopping:
       self.on_stopping = True
-      self.param_tr = 0
-      #self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-      self.x_ego_obstacle_cost = 6.0
+      #self.param_tr = 0
+      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.set_weights(prev_accel_constraint)
-      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
+      #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stopline * self.stop_line_offset])
     else:
       self.on_stopping = False
 
@@ -444,10 +443,10 @@ class LongitudinalMpc:
     # elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:  # < 13mph 21.6kph
     #   self.on_stopping = False
     #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
-    # elif x[N] < 150 and stopline[N] < 150:
+    # elif x[N] < 100 and stopline[N] < 100:
     #   self.on_stopping = True
     #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline*0.2)+(x*self.stop_line_offset)])
-    # elif x[N] < 150 and self.on_stopping:
+    # elif x[N] < 100 and self.on_stopping:
     #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, x])
     # else:
     #   self.on_stopping = False
