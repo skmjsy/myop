@@ -313,21 +313,10 @@ class CarController:
             #   if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
             #     stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
             #     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-
-#            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-#              self.smooth_start = True
-#              apply_accel = faccel if faccel <= 0 else faccel*0.5
-#            elif self.smooth_start and CS.clu_Vanz < setSpeed:
-#              apply_accel = interp(CS.clu_Vanz, [0, setSpeed], [faccel, aReqValue])
-#            else:
-#              self.smooth_start = False
-#              apply_accel = aReqValue
-#
             if stopping:
               self.stopped = True
             else:
               self.stopped = False
-#
           else:
             apply_accel = aReqValue
 
