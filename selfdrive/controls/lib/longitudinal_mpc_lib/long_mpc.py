@@ -402,7 +402,7 @@ class LongitudinalMpc:
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
 
-    self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [1.0, 0.9, 0.8, 0.6, 0.4]) #10m/s = 22mph, 15m/s = 33mph 54kph, 20m/s = 45mph 72kph, 25m/s = 56mph, 30m/s = 67mph 108kph
+    #self.stop_line_offset = interp(self.v_ego, [0, 10, 20, 25, 30], [1.0, 0.9, 0.8, 0.6, 0.4]) #10m/s = 22mph, 15m/s = 33mph 54kph, 20m/s = 45mph 72kph, 25m/s = 56mph, 30m/s = 67mph 108kph
     
     if stopping:
      self.on_stopping = True
