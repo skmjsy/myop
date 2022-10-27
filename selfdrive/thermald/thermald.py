@@ -168,7 +168,8 @@ def thermald_thread(end_event, hw_queue):
 
   count = 0
 
-  Loger.add("test")
+  loger = Loger()
+  loger.add("test")
 
   onroad_conditions: Dict[str, bool] = {
     "ignition": False,
