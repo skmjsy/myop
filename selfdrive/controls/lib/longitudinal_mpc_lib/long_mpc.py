@@ -426,7 +426,7 @@ class LongitudinalMpc:
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
 
-      str1 = 'TR={:.2f} prob={:2.1f} lead_0{:3.1f} cruise_obstacle{:3.1f} x{:3.1f} stopline{:3.1f} stop_line_offset{:3.1f} V={:.1f}:{:.1f}:{:.1f}:{:.1f}'.format(
+      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stop_line_offset={:3.1f} V={:.1f}:{:.1f}:{:.1f}:{:.1f}'.format(
         self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, self.stop_line_offset, v_ego, v[0], v[1], v[-1])
 
       self.log.add( '{}'.format( str1 ) )
