@@ -321,9 +321,9 @@ class CarController:
             else:
               self.stopped = False
 
-            str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
-       self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
-            self.log.add( '{}'.format( str_log2 ) )
+            # str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
+            #             self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
+            # self.log.add( '{}'.format( str_log2 ) )
 
           else:
             apply_accel = aReqValue
