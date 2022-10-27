@@ -51,7 +51,7 @@ class Loger:
                 cur_time = "{}:{}:{}:{}".format(  now.hour, now.minute, now.second, now.microsecond ) 
 
                 log_data = "{}-{} {}\r\n".format( cur_date, cur_time , txt) 
-                print( log_data )
+                #print( log_data )
                 try:
                     path_file_name = ROOT_LOG + cur_date + '-' + self.name + ".txt"
                     with open( path_file_name, "a") as file:
