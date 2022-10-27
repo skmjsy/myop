@@ -262,6 +262,7 @@ class CarController:
         setSpeed = round(set_speed)
 
         stopping = controls.LoC.long_control_state == LongCtrlState.stopping
+        radar_recog = (0 < CS.lead_distance <= 149)
 
         #opkr
         aReqValue = CS.scc12["aReqValue"]
@@ -351,7 +352,7 @@ class CarController:
 
         can_sends.append(create_scc12(self.packer, apply_accel, CC.enabled, self.scc12_cnt, self.scc_live, CS.scc12,
                                       CS.out.gasPressed, CS.out.brakePressed, CS.out.cruiseState.standstill,
-                                      self.car_fingerprint, self.stopped))
+                                      self.car_fingerprint, self.stopped, radar_recog, CS.out.stockAeb))
 
         can_sends.append(create_scc11(self.packer, self.frame, CC.enabled, set_speed, hud_control.leadVisible, self.scc_live, CS.scc11,
                        self.scc_smoother.active_cam, stock_cam))
