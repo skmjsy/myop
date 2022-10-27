@@ -123,7 +123,7 @@ def create_mdps12(packer, frame, mdps12):
 
   return packer.make_can_msg("MDPS12", 2, values)
 
-def create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, scc11, active_cam, stock_cam):
+def create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, scc11, active_cam, stock_cam, softHold):
   values = copy.copy(scc11)
   values["AliveCounterACC"] = frame // 2 % 0x10
 
@@ -135,7 +135,8 @@ def create_scc11(packer, frame, enabled, set_speed, lead_visible, scc_live, scc1
     values["MainMode_ACC"] = 1
     values["VSetDis"] = set_speed
     values["ObjValid"] = 1 if enabled else 0
-#  values["ACC_ObjStatus"] = lead_visible
+    # values["ACC_ObjStatus"] = lead_visible
+    values["SCCInfoDisplay"] = 4 if enabled and softHold else 2 if enabled else 0   #3: 전방상황주의, 4: 출발준비
 
   return packer.make_can_msg("SCC11", 0, values)
 

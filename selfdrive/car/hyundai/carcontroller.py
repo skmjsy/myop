@@ -371,7 +371,7 @@ class CarController:
                                       self.car_fingerprint, self.stopped, radar_recog, CS.out.stockAeb))
 
         can_sends.append(create_scc11(self.packer, self.frame, CC.enabled, set_speed, hud_control.leadVisible, self.scc_live, CS.scc11,
-                       self.scc_smoother.active_cam, stock_cam))
+                       self.scc_smoother.active_cam, stock_cam, self.stopped))
 
         if self.frame % 20 == 0 and CS.has_scc13:
           can_sends.append(create_scc13(self.packer, CS.scc13))
