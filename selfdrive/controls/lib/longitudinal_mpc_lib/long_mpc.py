@@ -3,6 +3,8 @@ import os
 import numpy as np
 import common.log as trace1
 
+from common.log import Loger
+
 from common.realtime import sec_since_boot
 from common.numpy_fast import clip, interp
 from selfdrive.swaglog import cloudlog
@@ -422,7 +424,7 @@ class LongitudinalMpc:
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
 
-      print()
+      #Loger.add("")
     else:
       self.on_stopping = False
 

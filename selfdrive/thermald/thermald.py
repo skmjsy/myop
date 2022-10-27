@@ -26,6 +26,8 @@ from selfdrive.thermald.fan_controller import EonFanController, UnoFanController
 from selfdrive.version import terms_version, training_version
 from selfdrive.ntune import ntune_option_enabled, ntune_option_get
 
+from common.log import Loger
+
 ThermalStatus = log.DeviceState.ThermalStatus
 NetworkType = log.DeviceState.NetworkType
 NetworkStrength = log.DeviceState.NetworkStrength
@@ -165,6 +167,8 @@ def thermald_thread(end_event, hw_queue):
   sm = messaging.SubMaster(["peripheralState", "gpsLocationExternal", "controlsState", "pandaStates"], poll=["pandaStates"])
 
   count = 0
+
+  Loger.add("test")
 
   onroad_conditions: Dict[str, bool] = {
     "ignition": False,
