@@ -289,6 +289,9 @@ class CarController:
 
           if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
             stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
+            str_log = '5.5 < CS.lead_distance <= 6.5: CS.lead_distance={:03.0f} stock_weight={:03.0f} apply_accel={:03.0f}  MPH={:03.0f} set_speed={:03.0f}'.format(
+                          CS.lead_distance, stock_weight, apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight, CS.out.vEgo*CV.MS_TO_MPH, set_speed )
+            self.log.add( '{}'.format( str_log ) )
 
           if stopping:
             self.stopped = True
@@ -313,14 +316,15 @@ class CarController:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
-              str_log2 = 'LongitudinalPlanSource.stop: self.dRel={:03.0f} stock_weight={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
-                          self.dRel, stock_weight, apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight, self.sm['longitudinalPlan'].stopLine[12] )
+              if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
+              elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * 5.0)
+
+              str_log2 = 'LongitudinalPlanSource.stop: self.dRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f} MPH={:03.0f} set_speed={:03.0f}'.format(
+                          self.dRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
               self.log.add( '{}'.format( str_log2 ) )
 
-              # if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
-              #   stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
-              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
             if stopping:
               self.stopped = True
             else:

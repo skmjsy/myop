@@ -341,11 +341,11 @@ class LongitudinalMpc:
 
     #opkr
     #####################################################################
-    # xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
-    # x = np.cumsum(np.insert(xforward, 0, x[0]))
-    # self.yref[:,1] = x
-    # self.yref[:,2] = v
-    # self.yref[:,3] = a
+    xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
+    x = np.cumsum(np.insert(xforward, 0, x[0]))
+    self.yref[:,1] = x
+    self.yref[:,2] = v
+    self.yref[:,3] = a
     #####################################################################
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
@@ -402,6 +402,10 @@ class LongitudinalMpc:
     stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
     x = (x[N]) * np.ones(N+1)
 
+    #opkr test
+    stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    x = (x[N] + 5.0) * np.ones(N+1)
+
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
 
     #10m/s = 22mph 36kph
@@ -426,8 +430,8 @@ class LongitudinalMpc:
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
 
-      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stop_line_offset={:3.1f} V={:.1f}:{:.1f}:{:.1f}'.format(
-        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, self.stop_line_offset, v_ego*CV.MS_TO_MPH, v[0], v[-1])
+      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline2={:3.1f} stop_line_offset={:3.1f} V={:.1f}:{:.1f}:{:.1f}'.format(
+        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, (stopline[N]*0.2)+(x[N]*0.8), self.stop_line_offset, v_ego*CV.MS_TO_MPH, v[0], v[-1])
 
       self.log.add( '{}'.format( str1 ) )
 
