@@ -416,11 +416,11 @@ class LongitudinalMpc:
 
     if stopping:
       self.on_stopping = True
-      self.param_tr = 0
+      #self.param_tr = 0
       #self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
-      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+      #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
 
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
