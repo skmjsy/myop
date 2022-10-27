@@ -297,33 +297,38 @@ class CarController:
 
           apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
-#        elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
-#          apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
-#          self.stopped = False
-        elif 0.1 < self.dRel < 6.0:
-#          apply_accel = min(-0.5, faccel*0.3)
-          if stopping:
-            self.stopped = True
-          else:
-            self.stopped = False
-#        elif 0.1 < self.dRel < 80:
-#          self.stopped = False
-#          pass
+        # elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
+        #   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+        #   self.stopped = False
+        # elif 0.1 < self.dRel < 6.0:
+        #   apply_accel = min(-0.5, faccel*0.3)
+        #   if stopping:
+        #     self.stopped = True
+        #   else:
+        #     self.stopped = False
+        # elif 0.1 < self.dRel < 80:
+        #   self.stopped = False
+        #   pass
         else:
           self.stopped = False
           if self.stopsign_enabled:
-            # if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-            #   if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
-            #     stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
-            #     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+              stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
+              str_log2 = 'LongitudinalPlanSource.stop: self.dRel={:03.0f} stock_weight={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
+                          self.dRel, stock_weight, apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight, self.sm['longitudinalPlan'].stopLine[12] )
+              self.log.add( '{}'.format( str_log2 ) )
+
+              # if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
+              #   stock_weight = interp(self.sm['longitudinalPlan'].stopLine[12], [2.5, 4.0], [1., 0.])
+              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
             if stopping:
               self.stopped = True
             else:
               self.stopped = False
 
-            str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
-                        self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
-            self.log.add( '{}'.format( str_log2 ) )
+            # str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
+            #             self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
+            # self.log.add( '{}'.format( str_log2 ) )
 
           else:
             apply_accel = aReqValue
