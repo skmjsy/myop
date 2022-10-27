@@ -211,13 +211,6 @@ class LongitudinalMpc:
     self.source = SOURCES[2]
     #apilot
     self.trafficState = 0
-    self.t_follow = T_FOLLOW
-    self.comfort_brake = COMFORT_BRAKE
-    self.xState = "CRUISE"
-    self.e2ePaused = False
-    self.longActiveUser = 0
-    self.onStopping = False
-
     #oprk
     self.v_ego = 0.
     self.lead_0_obstacle = np.zeros(13, dtype=np.float64)
@@ -256,12 +249,6 @@ class LongitudinalMpc:
     self.status = False
     self.crash_cnt = 0.0
     self.solution_status = 0
-
-    #apilot
-    self.t_follow = T_FOLLOW
-    self.comfort_brake = COMFORT_BRAKE
-    self.xState = "CRUISE"
-
     # timers
     self.solve_time = 0.0
     self.time_qp_solution = 0.0
@@ -398,22 +385,22 @@ class LongitudinalMpc:
 
 
     #apilot
-    # probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
-    # startSign = v[-1] > 5.0
-    # stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
-    # stopline_x = (model.stopLine.x)
+    probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
+    startSign = v[-1] > 5.0
+    stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
+    stopline_x = (model.stopLine.x)
     
-    # if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
-    #   self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
-    # elif stopSign:
-    #   self.trafficState = 1 # "RED"
-    # elif startSign:
-    #   self.trafficState = 2 # "GREEN"
+    if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
+      self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
+    elif stopSign:
+      self.trafficState = 1 # "RED"
+    elif startSign:
+      self.trafficState = 2 # "GREEN"
 
-    # stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
-    # x = (x[N]) * np.ones(N+1)
+    stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
+    x = (x[N]) * np.ones(N+1)
 
-    # stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
+    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100) else False
 
     #10m/s = 22mph 36kph
     #15m/s = 33mph 54kph 
@@ -428,15 +415,15 @@ class LongitudinalMpc:
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
 
-    # if stopping:
-    #   self.on_stopping = True
-    #   #self.param_tr = 0
-    #   self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-    #   self.set_weights(prev_accel_constraint)
-    #   #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-    #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stopline * self.stop_line_offset])
-    # else:
-    #   self.on_stopping = False
+    if stopping:
+      self.on_stopping = True
+      self.param_tr = 0
+      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
+      self.set_weights(prev_accel_constraint)
+      #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stopline * self.stop_line_offset])
+    else:
+      self.on_stopping = False
 
     #opkr
     #####################################################################################################################
@@ -465,88 +452,6 @@ class LongitudinalMpc:
     #   self.on_stopping = False
     #   x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
     #####################################################################################################################
-
-    #apilot
-    #####################################################################################################################
-
-    stopline_x = model.stopLine.x
-    model_x = x[N]
-    longActiveUserChanged = 0
-    #active_mode => -3(OFF auto), -2(OFF brake), -1(OFF user), 0(OFF), 1(ON user), 2(ON gas), 3(ON auto)
-    # if controls.longActiveUser != self.longActiveUser:
-    #   longActiveUserChanged = controls.longActiveUser
-    # self.longActiveUser = controls.longActiveUser
-    if v_ego*CV.MS_TO_KPH > 50.0 or self.xState in ["LEAD", "CRUISE"] or stopline_x > 20.0:
-      self.e2ePaused = False
-
-    if True:
-      probe = model.stopLine.prob if abs(carstate.steeringAngleDeg)<20 else 0.0 # 커브를 돌고 있으면 Stopline이 부정확한것 같음... prob를 0으로..
-      startSign = v[-1] > 5.0
-      stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
-      self.trafficState = 1 if stopSign else 2 if startSign else 0 
-
-      #E2E_STOP: 감속정지상태, 정지선 밖(2M이상)에 차량이 있어도 무시, 상태유지: 정지상태에서는 전방에 리드가 감지되어도 정지해야함. 
-      if self.xState == "E2E_STOP" and not self.e2ePaused: 
-        if radarstate.leadOne.status and (radarstate.leadOne.dRel - model_x) < 2.0:
-          self.xState = "LEAD"
-        elif startSign:
-          self.xState = "E2E_CRUISE"
-        if carstate.brakePressed and v_ego*CV.MS_TO_KPH < 5.0:  #예외: 정지상태에서 브레이크를 밟으면 강제정지모드.. E2E오류.. E2E_STOP2
-          self.xState = "E2E_STOP2"
-        if carstate.gasPressed:                 #예외: 정지중 accel을 밟으면 강제주행모드로 변경
-          self.xState = "E2E_CRUISE"
-          self.e2ePaused = True
-      #E2E_STOP2: 정지 유지상태: 신호오류등 상황발생시 정지유지.
-      elif self.xState == "E2E_STOP2": 
-        stopline_x = 0.0
-        if carstate.gasPressed or longActiveUserChanged==1:
-          self.xState = "E2E_CRUISE"
-      #E2E_CRUISE: 주행상태.
-      else:
-        if self.status:
-          self.xState = "LEAD"
-        elif stopSign and not self.e2ePaused:                 #신호인식이 되면 정지모드
-          self.xState = "E2E_STOP"
-        else:
-          self.xState = "E2E_CRUISE"
-    else:
-      self.xState = "CRUISE"
-
-    if self.xState in ["LEAD", "CRUISE"] or self.e2ePaused:
-      model_x = 400.0
-    elif self.xState == "E2E_CRUISE":
-      if probe < 0.1 or self.e2ePaused:                # 속도가 빠른경우 cruise_obstacle값보다 model_x값이 적어 속도증가(약80키로전후)를 차단함~
-        model_x = 400.0
-      elif probe == 0.0:
-        self.e2ePaused = False
-    elif self.xState == "E2E_STOP2":
-      model_x = stopline_x  * self.stop_line_offset
-      self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-      self.set_weights(prev_accel_constraint)
-    elif self.xState == "E2E_STOP":
-      self.comfort_brake = 1.9
-
-    x2 = model_x * np.ones(N+1)
-
-    # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
-    # when the leads are no factor.
-    v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
-    v_upper = v_ego + (T_IDXS * self.cruise_max_a * 1.05)
-    v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
-                                v_lower,
-                                v_upper)
-    #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.t_follow, COMFORT_BRAKE)
-    cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, tr)
-
-    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x2])
-
-    # str1 = 'TR={:.2f},state={} {},prob={:2.1f},L{:3.1f} C{:3.1f} X{:3.1f} S{:3.1f},V={:.1f}:{:.1f}:{:.1f}:{:.1f}'.format(
-    #   self.t_follow, self.xState, self.e2ePaused, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, v_ego, v[0], v[1], v[-1])
-    # self.debugText = str1
-
-    #self.source = SOURCES[np.argmin(x_obstacles[0])]
-    ####################################################################################################################
-
 
     self.source = SOURCES[np.argmin(x_obstacles[N])]
 
