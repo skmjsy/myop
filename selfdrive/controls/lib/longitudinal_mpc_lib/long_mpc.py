@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import os
 import numpy as np
-import common.log as trace1
-
 from common.log import Loger
 
 from common.realtime import sec_since_boot
@@ -227,7 +225,8 @@ class LongitudinalMpc:
     self.stop_line = ntune_scc_get("StopAtStopSign")
     self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
     self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
-    self.lo_timer = 0 
+    self.lo_timer = 0
+    self.log = Loger()
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -413,7 +412,7 @@ class LongitudinalMpc:
     
     #if not self.on_stopping:
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
-      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
+    #  self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
 
     if stopping:
       self.on_stopping = True
@@ -424,7 +423,14 @@ class LongitudinalMpc:
       cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
 
-      #Loger.add("")
+      # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
+      #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
+
+      str1 = 'TR={:.2f} prob={:2.1f} lead_0{:3.1f} cruise_obstacle{:3.1f} x{:3.1f} stoplin{:3.1f} x_obstacles{:3.1f} top_line_offset{:3.1f} V={:.1f}:{:.1f}:{:.1f}:{:.1f}'.format(
+        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, np.min(x_obstacles, axis=1), self.stop_line_offset, v_ego, v[0], v[1], v[-1])
+
+      self.log.add( '{}'.format( str1 ) )
+
     else:
       self.on_stopping = False
 
