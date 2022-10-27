@@ -1,5 +1,5 @@
 from random import randint
-
+from common.log import Loger
 from cereal import car, log, messaging
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
@@ -91,6 +91,8 @@ class CarController:
     self.vRel = 0
     self.yRel = 0
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
+
+    self.log = Loger()
 
     self.scc_smoother = SccSmoother()
     self.last_blinker_frame = 0
@@ -318,6 +320,11 @@ class CarController:
               self.stopped = True
             else:
               self.stopped = False
+
+            str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
+       self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
+            self.log.add( '{}'.format( str_log2 ) )
+
           else:
             apply_accel = aReqValue
 
