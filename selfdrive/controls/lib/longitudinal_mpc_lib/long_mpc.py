@@ -406,7 +406,7 @@ class LongitudinalMpc:
     stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    stopline3 = (stopline2*0.2)+(x*0.8)
+    stopline3 = (stopline2*0.2)+(x*0.8) * self.stop_line_offset
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
 
@@ -427,7 +427,7 @@ class LongitudinalMpc:
       self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
       #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle * 2, stopline3 * self.stop_line_offset])
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle * 2, stopline3])
 
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
