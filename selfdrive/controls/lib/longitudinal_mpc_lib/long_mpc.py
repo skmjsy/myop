@@ -406,7 +406,7 @@ class LongitudinalMpc:
     stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    stopline3 = (stopline2[N]*0.2)+(x[N]*0.8)
+    stopline3 = (stopline2*0.2)+(x*0.8)
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
 
@@ -433,7 +433,7 @@ class LongitudinalMpc:
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
 
       str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline3={:3.1f} stop_line_offset={:3.1f} V={:.1f}'.format(
-        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3, self.stop_line_offset, v_ego*CV.MS_TO_MPH)
+        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3[N], self.stop_line_offset, v_ego*CV.MS_TO_MPH)
 
       self.log.add( '{}'.format( str1 ) )
 
