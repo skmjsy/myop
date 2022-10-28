@@ -84,12 +84,10 @@ class CarController:
     self.stopsign_enabled = ntune_scc_get('StopAtStopSign')
 
     #opkr
+    self.stoppingdist = 4.0
     self.stopped = False
     self.smooth_start = False
     self.change_accel_fast = False
-    self.dRel = 0
-    self.vRel = 0
-    self.yRel = 0
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
 
     self.log = Loger()
@@ -248,11 +246,6 @@ class CarController:
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     if self.longcontrol and CS.cruiseState_enabled and (CS.scc_bus or not self.scc_live):
 
-      self.sm.update(0)
-      self.dRel = self.sm['radarState'].leadOne.dRel #EON Lead
-      self.vRel = self.sm['radarState'].leadOne.vRel #EON Lead
-      self.yRel = self.sm['radarState'].leadOne.yRel #EON Lead
-
       if self.frame % 2 == 0:
         set_speed = hud_control.setSpeed
 
@@ -270,7 +263,6 @@ class CarController:
         aReqValue = CS.scc12["aReqValue"]
         apply_accel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
         faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
-        last_accel = apply_accel
 
         if 0 < CS.lead_distance <= 149:
           # neokii's logic, opkr mod
@@ -301,13 +293,24 @@ class CarController:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              if self.sm['longitudinalPlan'].stopLine[12] < 10 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 10.0], [1.0, 5.0]))
-              elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * 5.0)
+              stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
-              str_log2 = 'LongitudinalPlanSource.stop: apply_accel={:02.3f}  stopLine={:03.0f} MPH={:02.0f} set_speed={:02.0f}'.format(
-                          apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
+              if aReqValue > 0.0:
+                apply_accel = interp(stop_distance, [14.0, 15.0], [max(apply_accel, aReqValue, faccel), aReqValue])
+              elif aReqValue < 0.0 and stop_distance < self.stoppingdist and apply_accel >= aReqValue:
+                if stop_distance < 2.0:
+                  apply_accel = self.accel - (DT_CTRL * 5.0)
+                elif stop_distance < self.stoppingdist:
+                  apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
+              elif aReqValue < 0.0:
+                stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
+                apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+              else:
+                stock_weight = 0.0
+                apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+
+              str_log2 = 'LPSource.stop: aReqValue={:02.3f} apply_accel={:02.3f}  stopLine={:03.0f} MPH={:02.0f} set_speed={:02.0f}'.format(
+                          aReqValue, apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
               self.log.add( '{}'.format( str_log2 ) )
 
             if stopping:
