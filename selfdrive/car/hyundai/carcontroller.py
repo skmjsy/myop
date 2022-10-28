@@ -316,8 +316,8 @@ class CarController:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              if self.sm['longitudinalPlan'].stopLine[12] < 4 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
+              if self.sm['longitudinalPlan'].stopLine[12] < 10 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 8.0], [1.0, 5.0]))
               elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * 5.0)
 

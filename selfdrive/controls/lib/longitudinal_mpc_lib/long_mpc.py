@@ -406,7 +406,7 @@ class LongitudinalMpc:
     stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    stopline3 = (stopline2*0.2)+(x*0.8) * self.stop_line_offset
+    stopline3 = (stopline2*0.2)+(x*0.8)
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
 
@@ -416,9 +416,13 @@ class LongitudinalMpc:
     #25m/s = 56mph 90kph
     #30m/s = 67mph 108kph
     
-    #if not self.on_stopping:
+    # if not self.on_stopping:
+    #   self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 1.0, 1.0, 0.9, 0.9])
+    
+    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [0.7, 0.8, 0.9, 0.9, 0.9])
+    stopline3 = (stopline2*0.2)+(x*0.8) * self.stop_line_offset
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
-    #  self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
+      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
 
     if stopping:
       self.on_stopping = True
@@ -432,8 +436,8 @@ class LongitudinalMpc:
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
 
-      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline3={:3.1f} stop_line_offset={:3.1f} V={:.1f}'.format(
-        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3[N], self.stop_line_offset, v_ego*CV.MS_TO_MPH)
+      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline3={:3.1f} offset={:3.1f} V={:.1f}'.format(
+        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3[N],  self.stop_line_offset, v_ego*CV.MS_TO_MPH)
 
       self.log.add( '{}'.format( str1 ) )
 
