@@ -289,9 +289,6 @@ class CarController:
 
           if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
             stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
-            str_log = '5.5 < CS.lead_distance <= 6.5: CS.lead_distance={:03.0f} stock_weight={:03.0f} apply_accel={:03.0f}  MPH={:03.0f} set_speed={:03.0f}'.format(
-                          CS.lead_distance, stock_weight, apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight, CS.out.vEgo*CV.MS_TO_MPH, set_speed )
-            self.log.add( '{}'.format( str_log ) )
 
           if stopping:
             self.stopped = True
@@ -299,19 +296,19 @@ class CarController:
             self.stopped = False
 
           apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-          
+
         else:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               if self.sm['longitudinalPlan'].stopLine[12] < 10 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 15.0], [1.0, 5.0]))
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 10.0], [1.0, 5.0]))
               elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * 5.0)
 
-              str_log2 = 'LongitudinalPlanSource.stop: apply_accel={:03.3f}  stopLine={:03.0f} MPH={:03.0f} set_speed={:03.0f}'.format(
-                          apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
-              self.log.add( '{}'.format( str_log2 ) )
+              # str_log2 = 'LongitudinalPlanSource.stop: apply_accel={:03.3f}  stopLine={:03.0f} MPH={:03.0f} set_speed={:03.0f}'.format(
+              #             apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
+              # self.log.add( '{}'.format( str_log2 ) )
 
             if stopping:
               self.stopped = True
