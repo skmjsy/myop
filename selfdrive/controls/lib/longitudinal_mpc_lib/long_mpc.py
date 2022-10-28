@@ -403,8 +403,10 @@ class LongitudinalMpc:
     x = (x[N]) * np.ones(N+1)
 
     #opkr test
-    stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
+
+    stopline3 = (stopline2[N]*0.2)+(x[N]*0.8)
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
 
@@ -425,13 +427,13 @@ class LongitudinalMpc:
       self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
       #cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, 0)
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, stopline * self.stop_line_offset])
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle * 2, stopline3 * self.stop_line_offset])
 
       # str_log = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}/{:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
       #  CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
 
-      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline2={:3.1f} stop_line_offset={:3.1f} V={:.1f}:{:.1f}:{:.1f}'.format(
-        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, (stopline2[N]*0.2)+(x[N]*0.8), self.stop_line_offset, v_ego*CV.MS_TO_MPH, v[0], v[-1])
+      str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline3={:3.1f} stop_line_offset={:3.1f} V={:.1f}'.format(
+        self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3, self.stop_line_offset, v_ego*CV.MS_TO_MPH)
 
       self.log.add( '{}'.format( str1 ) )
 
@@ -449,7 +451,7 @@ class LongitudinalMpc:
     self.lead_0_obstacle = lead_0_obstacle[:]
     self.lead_1_obstacle = lead_1_obstacle[:]
     self.cruise_target = cruise_obstacle[:]
-    self.stopline = stopline[:]
+    self.stopline = stopline3[:]
     self.stop_prob = model.stopLine.prob
 
     self.run()

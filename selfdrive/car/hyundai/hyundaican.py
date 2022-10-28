@@ -165,7 +165,7 @@ def create_scc12(packer, apply_accel, enabled, cnt, scc_live, scc12, gaspressed,
           values["StopReq"] = 1
         else:
           values["StopReq"] = 0
-      elif standstill and stopping:
+      else:
         if stopping:
           values["StopReq"] = 1
         else:

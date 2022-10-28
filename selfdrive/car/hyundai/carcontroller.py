@@ -316,24 +316,19 @@ class CarController:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              if self.sm['longitudinalPlan'].stopLine[12] < 5 and not CS.out.cruiseState.standstill:
+              if self.sm['longitudinalPlan'].stopLine[12] < 4 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
               elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * 5.0)
 
-              str_log2 = 'LongitudinalPlanSource.stop: self.dRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f} MPH={:03.0f} set_speed={:03.0f}'.format(
-                          self.dRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
+              str_log2 = 'LongitudinalPlanSource.stop: apply_accel={:03.3f}  stopLine={:03.0f} MPH={:03.0f} set_speed={:03.0f}'.format(
+                          apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
               self.log.add( '{}'.format( str_log2 ) )
 
             if stopping:
               self.stopped = True
             else:
               self.stopped = False
-
-            # str_log2 = 'self.dRel={:03.0f} self.vRel={:03.0f} apply_accel={:03.0f}  stopLine={:03.0f}'.format(
-            #             self.dRel, self.vRel, apply_accel, self.sm['longitudinalPlan'].stopLine[12] )
-            # self.log.add( '{}'.format( str_log2 ) )
-
           else:
             apply_accel = aReqValue
 
