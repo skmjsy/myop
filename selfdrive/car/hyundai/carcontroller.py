@@ -299,25 +299,13 @@ class CarController:
             self.stopped = False
 
           apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-
-        # elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
-        #   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
-        #   self.stopped = False
-        # elif 0.1 < self.dRel < 6.0:
-        #   apply_accel = min(-0.5, faccel*0.3)
-        #   if stopping:
-        #     self.stopped = True
-        #   else:
-        #     self.stopped = False
-        # elif 0.1 < self.dRel < 80:
-        #   self.stopped = False
-        #   pass
+          
         else:
           self.stopped = False
           if self.stopsign_enabled:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               if self.sm['longitudinalPlan'].stopLine[12] < 10 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 8.0], [1.0, 5.0]))
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 15.0], [1.0, 5.0]))
               elif self.sm['longitudinalPlan'].stopLine[12] < 2 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * 5.0)
 

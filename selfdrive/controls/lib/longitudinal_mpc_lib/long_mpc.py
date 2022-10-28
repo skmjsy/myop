@@ -408,7 +408,8 @@ class LongitudinalMpc:
 
     stopline3 = (stopline2*0.2)+(x*0.8)
 
-    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 100 and not carstate.brakePressed and not carstate.gasPressed) else False
+    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < 150 and not carstate.brakePressed and not carstate.gasPressed) else False
+    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
 
     #10m/s = 22mph 36kph
     #15m/s = 33mph 54kph 
@@ -419,7 +420,7 @@ class LongitudinalMpc:
     # if not self.on_stopping:
     #   self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 1.0, 1.0, 0.9, 0.9])
     
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [0.7, 0.8, 0.9, 0.9, 0.9])
+    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.9, 0.9, 0.85, 0.85])
     stopline3 = (stopline2*0.2)+(x*0.8) * self.stop_line_offset
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
       #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
