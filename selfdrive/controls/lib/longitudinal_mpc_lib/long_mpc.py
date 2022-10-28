@@ -223,8 +223,8 @@ class LongitudinalMpc:
     self.stop_prob = 0.0
     self.on_stopping = False
     self.stop_line = ntune_scc_get("StopAtStopSign")
-    self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
-    self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    self.x_ego_obstacle_cost = 6
+    self.stop_line_offset = 1.0
     self.lo_timer = 0
     self.log = Loger()
 
@@ -329,14 +329,12 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    self.lo_timer += 1
-    if self.lo_timer > 200:
-      self.lo_timer = 0
-      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    # self.lo_timer += 1
+    # if self.lo_timer > 200:
+    #   self.lo_timer = 0
+    #   self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
 
-    #apilot
     self.trafficState = 0
-
     v_ego = self.x0[1]
 
     #opkr
@@ -386,7 +384,6 @@ class LongitudinalMpc:
     self.set_weights(prev_accel_constraint)
     x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
 
-    #apilot
     probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
     startSign = v[-1] > 5.0
     stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
@@ -399,39 +396,18 @@ class LongitudinalMpc:
     elif startSign:
       self.trafficState = 2 # "GREEN"
 
-    # stopline = (stopline_x) * np.ones(N+1) if (stopSign) else 400.0 * np.ones(N+1)
-    # x = (x[N]) * np.ones(N+1)
-
-    #opkr test
-    stopline2 = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
+    stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    stopline3 = (stopline2*0.2)+(x*0.8)
+    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.9, 0.9, 0.9, 0.85])
+    stopline3 = (stopline*0.2)+(x*0.8) * self.stop_line_offset
 
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.9, 0.9, 0.85, 0.85])
-    stopline3 = (stopline2*0.2)+(x*0.8) * self.stop_line_offset
-
-    stop_sign_distance = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [100., 100., 130., 150.])
+    stop_sign_distance = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [100., 100., 120., 150.])
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < stop_sign_distance and not carstate.brakePressed and not carstate.gasPressed) else False
-    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
-
-    #10m/s = 22mph 36kph
-    #15m/s = 33mph 54kph 
-    #20m/s = 45mph 72kph 
-    #25m/s = 56mph 90kph
-    #30m/s = 67mph 108kph
-    
-    # if not self.on_stopping:
-    #   self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 1.0, 1.0, 0.9, 0.9])
-    
-
-      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_KPH, [0, 40, 56, 64, 72], [1.4, 1.4, 1.5, 1.6, 1.7]) #KPH
-      #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.4, 1.4, 1.5, 1.6, 1.7]) #MPH 35mph-1.45, 40mph-1.55 tested.
 
     if stopping:
       self.on_stopping = True
-      #self.x_ego_obstacle_cost = ntune_scc_get("X_EGO_OBSTACLE_COST")
       self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle * 2, stopline3])

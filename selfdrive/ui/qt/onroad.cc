@@ -552,7 +552,7 @@ void NvgWindow::drawStoplineSignal(QPainter &p) {
       p.setOpacity(0.8);
       p.drawPixmap(TRsign_x, TRsign_y, TRsign_w, TRsign_h, ic_trafficLight_red);
 
-      if (stop_line.getX() <= 100) {
+      if (stop_line.getX() <= 150) {
         QString sltext;
         QColor color = QColor(255, 255, 255, 230);
         sltext.sprintf( "%d m", (int)(stop_line.getX()));
