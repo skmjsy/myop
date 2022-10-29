@@ -399,7 +399,7 @@ class LongitudinalMpc:
     stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [0.9, 0.9, 0.8, 0.8, 0.8])
+    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [0.9, 0.9, 0.85, 0.85, 0.8])
     stopline3 = (stopline*0.2)+(x*0.8)
     stopline3 *= self.stop_line_offset
 
