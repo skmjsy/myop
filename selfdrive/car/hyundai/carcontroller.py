@@ -295,22 +295,28 @@ class CarController:
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
-              if aReqValue > 0.0:
-                apply_accel = interp(stop_distance, [14.0, 15.0], [max(apply_accel, aReqValue, faccel), aReqValue])
-              elif aReqValue < 0.0 and stop_distance < self.stoppingdist and apply_accel >= aReqValue:
-                if stop_distance < 2.0:
-                  apply_accel = self.accel - (DT_CTRL * 5.0)
-                elif stop_distance < self.stoppingdist:
-                  apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
-              elif aReqValue < 0.0:
-                stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
-                apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-              else:
-                stock_weight = 0.0
-                apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+              # if aReqValue > 0.0:
+              #   apply_accel = interp(stop_distance, [14.0, 15.0], [max(apply_accel, aReqValue, faccel), aReqValue])
+              # elif aReqValue < 0.0 and stop_distance < self.stoppingdist and apply_accel >= aReqValue:
+              #   if stop_distance < 2.0:
+              #     apply_accel = self.accel - (DT_CTRL * 5.0)
+              #   elif stop_distance < self.stoppingdist:
+              #     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
+              # elif aReqValue < 0.0:
+              #   stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
+              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+              # else:
+              #   stock_weight = 0.0
+              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+
+              if stop_distance < 20 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 25.0], [0.5, 3.0]))
+              elif stop_distance < 2 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * 5.0)
+
 
               str_log2 = 'LPSource.stop: aReqValue={:02.3f} apply_accel={:02.3f}  stopLine={:03.0f} MPH={:02.0f} set_speed={:02.0f}'.format(
-                          aReqValue, apply_accel, self.sm['longitudinalPlan'].stopLine[12], CS.out.vEgo*CV.MS_TO_MPH, set_speed )
+                          aReqValue, apply_accel, stop_distance, CS.out.vEgo*CV.MS_TO_MPH, set_speed )
               self.log.add( '{}'.format( str_log2 ) )
 
             if stopping:
