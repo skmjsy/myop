@@ -400,7 +400,7 @@ class LongitudinalMpc:
     x = (x[N] + 5.0) * np.ones(N+1)
 
     self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.9, 0.9, 0.9, 0.85])
-    stopline3 = (stopline*0.2)+(x*0.8) * self.stop_line_offset
+    stopline3 = (stopline*0.2)+(x*0.8) * self.stop_line_offset - 2.0
 
     stop_sign_distance = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [120., 130., 140., 150.])
 
