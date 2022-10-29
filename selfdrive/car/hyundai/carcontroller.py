@@ -309,8 +309,8 @@ class CarController:
               #   stock_weight = 0.0
               #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
-              if stop_distance < 20 and not CS.out.cruiseState.standstill:
-                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 25.0], [0.5, 3.0]))
+              if stop_distance < 30 and not CS.out.cruiseState.standstill:
+                apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 25.0], [0.5, 4.0]))
               elif stop_distance < 2 and not CS.out.cruiseState.standstill:
                 apply_accel = self.accel - (DT_CTRL * 5.0)
 
