@@ -404,8 +404,8 @@ class LongitudinalMpc:
 
     stop_sign_distance = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [100., 120., 120., 150.])
 
-    # stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline_x < stop_sign_distance and not carstate.brakePressed and not carstate.gasPressed) else False
-    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline3[N] < 120) else False
+    stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline3[N] < stop_sign_distance and not carstate.brakePressed and not carstate.gasPressed) else False
+    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline3[N] < 120) else False
 
     if stopping:
       self.on_stopping = True
