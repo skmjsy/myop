@@ -169,7 +169,7 @@ class Planner:
 
     longitudinalPlan.hasLead = sm['radarState'].leadOne.status
     #dp
-    longitudinalPlan.longitudinalPlanSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
+    longitudinalPlan.longitudinalPlanSource = self.mpc.source #if self.mpc.source != 'cruise' else self.cruise_source
     longitudinalPlan.visionTurnControllerState = self.vision_turn_controller.state
     longitudinalPlan.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
     longitudinalPlan.eventsDEPRECATED = self.events.to_msg()
