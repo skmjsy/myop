@@ -293,11 +293,13 @@ class CarController:
           self.stopped = False
           if self.stopsign_enabled:
             self.sm.update(0)
-            stop_distance = self.sm['longitudinalPlan'].stopLine[12]
+            
             if self.sm['longitudinalPlan'].onStop:
             #if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
             #if 0 < stop_distance  < 150:
               #stop_distance = self.sm['longitudinalPlan'].stopLine[12]
+
+              stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
               if not CS.out.cruiseState.standstill:
                 if stop_distance < 2.0:
