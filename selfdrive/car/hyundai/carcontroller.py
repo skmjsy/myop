@@ -292,6 +292,7 @@ class CarController:
         else:
           self.stopped = False
           if self.stopsign_enabled:
+            self.sm.update(0)
             stop_distance = self.sm['longitudinalPlan'].stopLine[12]
             if self.sm['longitudinalPlan'].onStop:
             #if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
