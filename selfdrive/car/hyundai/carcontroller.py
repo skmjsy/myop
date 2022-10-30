@@ -292,28 +292,8 @@ class CarController:
         else:
           self.stopped = False
           if self.stopsign_enabled:
-            print(self.sm['longitudinalPlan'].longitudinalPlanSource)
             if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
-
-              # if aReqValue > 0.0:
-              #   apply_accel = interp(stop_distance, [14.0, 15.0], [max(apply_accel, aReqValue, faccel), aReqValue])
-              # elif aReqValue < 0.0 and stop_distance < self.stoppingdist and apply_accel >= aReqValue:
-              #   if stop_distance < 2.0:
-              #     apply_accel = self.accel - (DT_CTRL * 5.0)
-              #   elif stop_distance < self.stoppingdist:
-              #     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
-              # elif aReqValue < 0.0:
-              #   stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
-              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-              # else:
-              #   stock_weight = 0.0
-              #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
-
-              # if stop_distance > 5 and not CS.out.cruiseState.standstill:
-              #   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.5, 15.0, 30.0, 45.0], [0.5, 6,0, 7.0, 8.0]))
-              # elif stop_distance <= 5 and not CS.out.cruiseState.standstill:
-              #   apply_accel = self.accel - (DT_CTRL * 5.0)
 
               if not CS.out.cruiseState.standstill:
                 if stop_distance < 2.0:

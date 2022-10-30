@@ -400,25 +400,19 @@ class LongitudinalMpc:
     x = (x[N] + 5.0) * np.ones(N+1)
 
     self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.95, 0.9, 0.85, 0.8])
-    stopline3 = (stopline*0.2)+(x*0.8)
-    stopline3 *= self.stop_line_offset
+    stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + 1.0
 
-    stop_sign_distance = interp(self.v_ego*CV.MS_TO_MPH, [0, 35, 40, 45], [120., 130., 140., 150.])
-
-    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline3[N] < 150 and not carstate.brakePressed and not carstate.gasPressed) else False
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
-    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and stopline3[N] < 120) else False
 
     if stopping:
       self.on_stopping = True
       self.x_ego_obstacle_cost = 6.0
       self.set_weights(prev_accel_constraint)
-      #x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle * 2, stopline3])
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
 
       # str1 = 'TR={:.2f} prob={:2.1f} lead_0={:3.1f} cruise_obstacle={:3.1f} x={:3.1f} stopline={:3.1f} stopline3={:3.1f} sign_distance={:3.1f} offset={:3.1f} V={:.1f}'.format(
-      #    self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0] * 2, x[N], stopline_x, stopline3[N], stop_sign_distance, self.stop_line_offset, v_ego*CV.MS_TO_MPH)
+      #    self.param_tr, model.stopLine.prob, lead_0_obstacle[0], cruise_obstacle[0], x[N], stopline_x, stopline3[N], stop_sign_distance, self.stop_line_offset, v_ego*CV.MS_TO_MPH)
 
       # self.log.add( '{}'.format( str1 ) )
 
