@@ -84,7 +84,7 @@ class CarController:
     self.stopsign_enabled = ntune_scc_get('StopAtStopSign')
 
     #opkr
-    self.stoppingdist = 6.0
+    self.stoppingdist = ntune_scc_get('StoppingDist')
     self.stopped = False
     self.smooth_start = False
     self.change_accel_fast = False
