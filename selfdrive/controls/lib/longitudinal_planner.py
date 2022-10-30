@@ -185,6 +185,7 @@ class Planner:
     longitudinalPlan.cruiseTarget = self.mpc.cruise_target.tolist()
     longitudinalPlan.stopLine = self.mpc.stopline.tolist()
     longitudinalPlan.stoplineProb = self.mpc.stop_prob
+    longitudinalPlan.onStop = self.mpc.on_stopping
 
     #apilot
     longitudinalPlan.trafficState = self.mpc.trafficState
