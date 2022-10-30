@@ -225,6 +225,7 @@ class LongitudinalMpc:
     self.stop_line = ntune_scc_get("StopAtStopSign")
     self.x_ego_obstacle_cost = 6
     self.stop_line_offset = 1.0
+    self.stop_line_x_offset = 0.
     self.lo_timer = 0
     self.log = Loger()
 
@@ -246,6 +247,7 @@ class LongitudinalMpc:
     self.param_tr = T_FOLLOW
     self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
     self.stop_line_offset = 1.0
+    self.stop_line_x_offset = 0.
     for i in range(N+1):
       self.solver.set(i, 'x', np.zeros(X_DIM))
     self.last_cloudlog_t = 0
@@ -329,10 +331,11 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    # self.lo_timer += 1
-    # if self.lo_timer > 200:
-    #   self.lo_timer = 0
-    #   self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+    self.lo_timer += 1
+    if self.lo_timer > 200:
+      self.lo_timer = 0
+      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
+      self.stop_line_x_offset = ntune_scc_get("STOP_LINE_X_OFFSET")
 
     self.trafficState = 0
     v_ego = self.x0[1]
@@ -399,8 +402,11 @@ class LongitudinalMpc:
     stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.95, 0.9, 0.85, 0.8])
-    stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + 1.0
+    #self.stop_line_offset = interp(self.v_ego*CV.MS_TO_MPH, [0, 25, 35, 40, 45], [1.0, 0.95, 0.9, 0.85, 0.8])
+    if self.stop_line_offset < 0.7 or self.stop_line_offset > 1.2:
+      self.stop_line_offset = 1.0
+
+    stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
 
