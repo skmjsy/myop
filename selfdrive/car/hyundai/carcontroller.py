@@ -300,11 +300,12 @@ class CarController:
                 if not CS.out.cruiseState.standstill:
                   if stop_distance < 2.0:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
-                  elif aReqValue < 0.0 and stop_distance < self.stoppingdist  and apply_accel >= aReqValue:
+                  #elif aReqValue < 0.0 and stop_distance < self.stoppingdist  and apply_accel >= aReqValue:
+                  elif stop_distance < self.stoppingdist:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))  
-                  elif aReqValue < 0.0:
-                    stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 1.0, 1.0, 1.0, 1.0])
-                    apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight                  
+                  # elif aReqValue < 0.0:
+                  #   stock_weight = interp(stop_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 1.0, 1.0, 1.0, 1.0])
+                  #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight                  
                   else:
                     stock_weight = 0.0
                     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
