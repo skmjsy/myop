@@ -310,7 +310,7 @@ class CarController:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [1.0, 10.0], [1.0, 5.0]))    
                   # elif stop_distance < 25:
                   #   stock_weight = 0.0
-                  #   stock_weight = interp(stop_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
+                  #   stock_weight = interp(stop_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 1.0])
                   #   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight                                  
                   # else:
                   #   stock_weight = 0.0
