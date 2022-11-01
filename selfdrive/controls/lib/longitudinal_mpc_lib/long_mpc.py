@@ -406,7 +406,10 @@ class LongitudinalMpc:
     if self.stop_line_offset < 0.7 or self.stop_line_offset > 1.2:
       self.stop_line_offset = 1.0
 
-    stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
+    #stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
+
+    stopline2 = (model.stopLine.x) * np.ones(N+1)
+    stopline3 = stopline2 * self.stop_line_offset + self.stop_line_x_offset
 
     stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
 
