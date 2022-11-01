@@ -313,7 +313,6 @@ class CarController:
                     stock_weight = interp(stop_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
                     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
                     
-
                   str_log = '{:03.0f}, {:03.2f}, {:03.2f}, {:02.0f}, {:02.0f}, {:02.0f}'.format(
                             stop_distance, aReqValue, apply_accel, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist)
                   self.log.add( '{}'.format( str_log ) )
@@ -322,8 +321,8 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-          else:
-            apply_accel = aReqValue
+          # else:
+          #   apply_accel = aReqValue
 
         apply_accel = clip(apply_accel if CC.longActive else 0, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
