@@ -14,7 +14,7 @@ from common.conversions import Conversions as CV
 from common.params import Params
 from selfdrive.controls.lib.longcontrol import LongCtrlState
 from selfdrive.road_speed_limiter import road_speed_limiter_get_active
-from selfdrive.ntune import ntune_scc_get
+from selfdrive.ntune import ntune_scc_get, ntune_scc_enabled
 
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 VisualAlert = car.CarControl.HUDControl.VisualAlert
@@ -81,10 +81,11 @@ class CarController:
     #else:
     #  self.stopsign_enabled = param.get_bool("StopAtStopSign")
 
-    self.stopsign_enabled = ntune_scc_get('StopAtStopSign')
+    self.stopsign_enabled = ntune_scc_enabled('StopAtStopSign')
 
     #opkr
     self.stoppingdist = ntune_scc_get('StoppingDist')
+    self.lo_timer = 0
     self.stopped = False
     self.smooth_start = False
     self.change_accel_fast = False
@@ -246,6 +247,11 @@ class CarController:
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     if self.longcontrol and CS.cruiseState_enabled and (CS.scc_bus or not self.scc_live):
 
+      self.lo_timer += 1
+      if self.lo_timer > 200:
+        self.lo_timer = 0
+        self.stoppingdist = ntune_scc_get('StoppingDist')
+
       if self.frame % 2 == 0:
         set_speed = hud_control.setSpeed
 
@@ -306,9 +312,9 @@ class CarController:
                     stock_weight = 0.0
                     apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
-                  # str_log2 = 'LPSource.stop: aReqValue={:02.3f} apply_accel={:02.3f}  stopLine={:03.0f} MPH={:02.0f} set_speed={:02.0f}'.format(
-                  #             aReqValue, apply_accel, stop_distance, CS.out.vEgo*CV.MS_TO_MPH, set_speed )
-                  # self.log.add( '{}'.format( str_log2 ) )
+                  str_log = '{:03.0f}, {:03.2f}, {:03.2f}, {:02.0f}, {:02.0f}, {:02.0f}'.format(
+                            stop_distance, aReqValue, apply_accel, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist)
+                  self.log.add( '{}'.format( str_log ) )
 
               if stopping:
                 self.stopped = True
