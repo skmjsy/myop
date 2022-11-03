@@ -20,6 +20,8 @@ from selfdrive.ntune import ntune_torque_get
 # friction in the steering wheel that needs to be overcome to
 # move it at all, this is compensated for too.
 
+LOW_SPEED_X = [0, 10, 20, 30]
+LOW_SPEED_Y = [15, 13, 10, 5]
 
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI):
@@ -73,8 +75,14 @@ class LatControlTorque(LatControl):
       else:
         low_speed_factor = interp(CS.vEgo, [0, 5], [300, 0])
 
+      #setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
+      #measurement = actual_lateral_accel + low_speed_factor * actual_curvature
+      ###############################################################################
+      low_speed_factor = interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y)**2
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
+      ###############################################################################
+
       error = setpoint - measurement
       pid_log.error = self.torque_from_lateral_accel(lateral_accel_value=error, torque_params=self.live_torque_params)
 
