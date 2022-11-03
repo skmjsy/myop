@@ -340,6 +340,8 @@ class LongitudinalMpc:
     self.trafficState = 0
     v_ego = self.x0[1]
 
+    x1 = x
+
     #opkr
     #####################################################################
     xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
@@ -422,6 +424,10 @@ class LongitudinalMpc:
       self.set_weights(prev_accel_constraint)
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
+
+      str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}'.format(
+                model.stopLine.x, x1[N], x[N], stopline3[N], v_ego*CV.MS_TO_MPH)
+      self.log.add( '{}'.format( str_log ) )
 
     else:
       self.on_stopping = False
