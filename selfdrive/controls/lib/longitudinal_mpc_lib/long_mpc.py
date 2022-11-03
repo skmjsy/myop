@@ -406,7 +406,6 @@ class LongitudinalMpc:
     #stopping = model.stopLine.prob > 0.5 if self.stop_line else False
     #stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
     
-    #test
     stopline = (model.stopLine.x + 5.0) * np.ones(N+1)   
 
     x = (x[N] + 5.0) * np.ones(N+1)
