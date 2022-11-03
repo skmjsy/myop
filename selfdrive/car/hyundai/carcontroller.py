@@ -302,7 +302,7 @@ class CarController:
 
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
-              if 0 < stop_distance  < 50:
+              if 0 <= stop_distance  < 50:
                 if not CS.out.cruiseState.standstill:
                   if stop_distance < 6.0:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
