@@ -419,6 +419,10 @@ class LongitudinalMpc:
     stopping = True if (self.stop_line and probe > 0.5 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
     if stopping:
+      str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}'.format(
+                model.stopLine.x, x1[0], x[0], stopline3[N], v_ego*CV.MS_TO_MPH)
+      self.log.add( '{}'.format( str_log ) )
+
       self.on_stopping = True
       if v_ego < 0.5:
         stopline3 = 0.0
@@ -427,9 +431,7 @@ class LongitudinalMpc:
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
 
-      str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}'.format(
-                model.stopLine.x, x1[0], x[0], stopline3[N], v_ego*CV.MS_TO_MPH)
-      self.log.add( '{}'.format( str_log ) )
+
 
     else:
       self.on_stopping = False
