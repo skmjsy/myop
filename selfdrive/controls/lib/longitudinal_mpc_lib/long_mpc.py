@@ -426,7 +426,7 @@ class LongitudinalMpc:
       self.params[:,2] = stopline3
 
       str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}'.format(
-                model.stopLine.x, x1[N], x[N], stopline3[N], v_ego*CV.MS_TO_MPH)
+                model.stopLine.x, x1[0], x[0], stopline3[N], v_ego*CV.MS_TO_MPH)
       self.log.add( '{}'.format( str_log ) )
 
     else:
