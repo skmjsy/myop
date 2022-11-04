@@ -84,13 +84,15 @@ class CarController:
     self.stopsign_enabled = ntune_scc_enabled('StopAtStopSign')
 
     #opkr
+    self.prev_dist = 150
+    self.decel_zone1 = False
+    self.decel_zone2 = False
     self.stoppingdist = ntune_scc_get('StoppingDist')
     self.lo_timer = 0
     self.stopped = False
     self.smooth_start = False
     self.change_accel_fast = False
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
-
     self.log = Loger()
 
     self.scc_smoother = SccSmoother()
@@ -302,19 +304,33 @@ class CarController:
 
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
-              if 0 <= stop_distance  < 50:
+              dist_to_stop = self.prev_dist = min(self.prev_dist, stop_distance)
+
+              if dist_to_stop <= 20 and CS.out.vEgo*CV.MS_TO_MPH >= 15.0 and not self.decel_zone1:
+                self.decel_zone1 = True
+                self.decel_zone2 = False
+              elif dist_to_stop <= 20 and CS.out.vEgo*CV.MS_TO_MPH < 15.0 and not self.decel_zone1 and not self.decel_zone2:
+                self.decel_zone1 = False
+                self.decel_zone2 = True
+
+              if 0 <= dist_to_stop < 50:
+
                 if not CS.out.cruiseState.standstill:
-                  if stop_distance < 6.0:
+                  if dist_to_stop < 6.0:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
-                  elif stop_distance < self.stoppingdist:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [1.0, 13.0], [1.0, 5.0]))
+                  elif self.decel_zone1:
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.0, 4.0, 5.0]))
+                  elif self.decel_zone2:
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.0, 2.0, 3.0]))
                   else:
                     apply_accel = self.accel - (DT_CTRL * 0.1)
 
                   # str_log = ', {:03.0f}, {:03.2f}, {:03.2f}, {:02.0f}, {:02.0f}, {:02.0f}'.format(
-                  #           stop_distance, aReqValue, apply_accel, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist)
+                  #           dist_to_stop, aReqValue, apply_accel, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist)
                   # self.log.add( '{}'.format( str_log ) )
-
+            else:
+              self.decel_zone1 = False
+              self.decel_zone2 = False
         if stopping:
           self.stopped = True
         else:
