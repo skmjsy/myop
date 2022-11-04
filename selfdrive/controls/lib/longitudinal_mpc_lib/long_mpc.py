@@ -400,10 +400,6 @@ class LongitudinalMpc:
     elif startSign:
       self.trafficState = 2 # "GREEN"
 
-    #test
-    #stopping = model.stopLine.prob > 0.5 if self.stop_line else False
-    #stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopSign else 400 * np.ones(N+1)
-    
     stopline = (model.stopLine.x + 5.0) * np.ones(N+1)   
 
     x = (x[N] + 5.0) * np.ones(N+1)
@@ -413,23 +409,17 @@ class LongitudinalMpc:
 
     stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
 
-    #stopline3 = (((stopline*0.2)+(x*0.8)))
-
-    #self.stop_line_offset = interp(stopline3, [, 20, 30, 50], [])    
-
-    #stopping = True if (self.stop_line and self.trafficState == 1 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     stopping = True if (self.stop_line and probe > 0.5 and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
     if stopping:
-      str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
-                model.stopLine.x, x[0], stopline3[N], v_ego*CV.MS_TO_MPH, self.stop_line_x_offset)
-      self.log.add( '{}'.format( str_log ) )
+      # str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
+      #           model.stopLine.x, x[0], stopline3[N], v_ego*CV.MS_TO_MPH, self.stop_line_x_offset)
+      # self.log.add( '{}'.format( str_log ) )
 
       self.on_stopping = True
       if v_ego < 0.5:
         stopline3 *= 0.0
-      # self.x_ego_obstacle_cost = 6.0
-      # self.set_weights(prev_accel_constraint)
+
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
 

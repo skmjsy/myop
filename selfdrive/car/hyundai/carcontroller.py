@@ -304,35 +304,34 @@ class CarController:
 
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
-              dist_to_stop = self.prev_dist = min(self.prev_dist, stop_distance)
 
-              if stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH >= 15.0 and not self.decel_zone1:
+              if stop_distance <= self.stoppingdist and CS.out.vEgo*CV.MS_TO_MPH >= 15.0 and not self.decel_zone1:
                 self.decel_zone1 = True
                 self.decel_zone2 = False
-              elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH < 15.0 and not self.decel_zone1 and not self.decel_zone2:
+              elif stop_distance <= self.stoppingdist and CS.out.vEgo*CV.MS_TO_MPH < 15.0 and not self.decel_zone1 and not self.decel_zone2:
                 self.decel_zone1 = False
                 self.decel_zone2 = True
 
               if 0 <= stop_distance < 50:
-
                 if not CS.out.cruiseState.standstill:
                   if stop_distance < 5.0:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
                   elif self.decel_zone1:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.0, 4.0, 5.0]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.2, 4.0, 5.0]))
                   elif self.decel_zone2:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 0.5, 0.8, 1.0]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 1.0, 3.0, 4.0]))
                   else:
                     apply_accel = self.accel - (DT_CTRL * 0.1)
 
-                  # str_log = ', {:03.0f}, {:03.2f}, {:03.2f}, {:02.0f}, {:02.0f}, {:02.0f}'.format(
-                  #           dist_to_stop, aReqValue, apply_accel, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist)
-                  try:
-                    str_log = '{:}, {:}, {:}, {:}, {:}'.format(
-                              self.decel_zone1, self.decel_zone2, stop_distance, dist_to_stop, self.prev_dist )
-                    self.log.add( '{}'.format( str_log ) )
-                  except:
-                    print("error",self.decel_zone2)
+                  str_log = ', {:03.0f}, {:02.0f}, {:02.0f}, {:02.0f}, {:}, {:}'.format(
+                            stop_distance, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.stoppingdist, self.decel_zone1, self.decel_zone2)
+                  self.log.add( '{}'.format( str_log ) )
+                  # try:
+                  #   str_log = '{:}, {:}, {:}, {:}, {:}'.format(
+                  #             self.decel_zone1, self.decel_zone2, stop_distance)
+                  #   self.log.add( '{}'.format( str_log ) )
+                  # except:
+                  #   print("error",self.decel_zone2)
             else:
               self.decel_zone1 = False
               self.decel_zone2 = False
