@@ -317,7 +317,8 @@ class CarController:
                   if stop_distance < 5.0:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
                   elif self.decel_zone1:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.2, 4.0, 5.0]))
+                    #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.2, 4.0, 5.0])) #exact stop at line
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 1.2, 4.0, 6.0]))
                   elif self.decel_zone2:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 0.8, 2.8, 3.8]))
                   else:
