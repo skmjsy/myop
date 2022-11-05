@@ -321,11 +321,11 @@ class CarController:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
                   elif self.decel_zone2:
                     #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.2, 4.0, 5.0])) #1
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0, 8.0, 10.0, 15.0], [0.0, 0.2, 2.0, 4.0, 6.0]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 8.0, 10.0, 15.0], [0.0, 0.2, 2.0, 4.0, 6.0]))
                   elif self.decel_zone3:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0, 10.0], [0.0, 0.2, 1.0]))               
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0, 8.0, 10.0], [0.0, 0.2, 0.8, 2.0]))               
                   elif stop_distance <= 50:
-                    if CS.out.vEgo*CV.MS_TO_MPH >= 25:
+                    if CS.out.vEgo*CV.MS_TO_MPH >= 20:
                       apply_accel = self.accel - (DT_CTRL * 0.3)
                     else:
                       apply_accel = self.accel - (DT_CTRL * 0.1)
