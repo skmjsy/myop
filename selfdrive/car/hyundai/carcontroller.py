@@ -306,7 +306,7 @@ class CarController:
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
-              if self.stoppingdist < stop_distance < 55 and CS.out.vEgo*CV.MS_TO_MPH >= 30:
+              if False: # self.stoppingdist < stop_distance < 55 and CS.out.vEgo*CV.MS_TO_MPH >= 30:
                 self.decel_zone1 = True
                 self.decel_zone2 = False
                 self.decel_zone3 = False
@@ -330,7 +330,7 @@ class CarController:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 0.8, 2.0, 3.0]))
                   elif self.decel_zone1:
                     apply_accel = self.accel - (DT_CTRL * 0.2)                
-                  elif stop_distance < 50:
+                  elif stop_distance <= 50:
                     apply_accel = self.accel - (DT_CTRL * 0.1)
 
                   str_log = ', {:03.0f}, {:02.0f}, {:02.0f}, {:}, {:}, {:}'.format(

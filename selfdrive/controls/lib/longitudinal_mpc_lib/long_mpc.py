@@ -223,7 +223,7 @@ class LongitudinalMpc:
     self.stop_prob = 0.0
     self.on_stopping = False
     self.stop_line = ntune_scc_enabled("StopAtStopSign")
-    self.x_ego_obstacle_cost = 6
+    self.x_ego_obstacle_cost = 3
     self.stop_line_offset = 1.0
     self.stop_line_x_offset = 0.
     self.lo_timer = 0
@@ -390,8 +390,6 @@ class LongitudinalMpc:
     probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
     startSign = v[-1] > 5.0
     stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
-    #stopSign = v_ego*CV.MS_TO_MPH < 50.0 and x[N] < 120.0 and ((v[-1] < 3.0) or (v[-1] < v_ego*0.60))
-    stopline_x = (model.stopLine.x)
     
     if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
       self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
@@ -409,7 +407,7 @@ class LongitudinalMpc:
 
     stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
 
-    stopping = True if (self.stop_line and probe > 0.5 and v_ego*CV.MS_TO_MPH <= 55. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
+    stopping = True if (self.stop_line and probe > 0.5 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
     if stopping:
       # str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
@@ -419,6 +417,9 @@ class LongitudinalMpc:
       self.on_stopping = True
       if v_ego < 0.5:
         stopline3 *= 0.0
+
+      self.x_ego_obstacle_cost = 6
+      self.set_weights(prev_accel_constraint)
 
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
