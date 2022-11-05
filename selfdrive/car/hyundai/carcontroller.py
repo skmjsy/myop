@@ -331,7 +331,10 @@ class CarController:
                   elif self.decel_zone1:
                     apply_accel = self.accel - (DT_CTRL * 0.2)                
                   elif stop_distance <= 50:
-                    apply_accel = self.accel - (DT_CTRL * 0.1)
+                    if CS.out.vEgo*CV.MS_TO_MPH >= 25:
+                      apply_accel = self.accel - (DT_CTRL * 0.3)
+                    else:
+                      apply_accel = self.accel - (DT_CTRL * 0.1)
 
                   str_log = ', {:03.0f}, {:02.0f}, {:02.0f}, {:}, {:}, {:}'.format(
                             stop_distance, CS.out.vEgo*CV.MS_TO_MPH, set_speed, self.decel_zone1, self.decel_zone2, self.decel_zone3)
