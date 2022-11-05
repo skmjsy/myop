@@ -407,7 +407,7 @@ class LongitudinalMpc:
 
     stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
 
-    stopping = True if (self.stop_line and self.trafficState = 1 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
+    stopping = True if (self.stop_line and self.trafficState == 1 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
     if stopping:
       # str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
