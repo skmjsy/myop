@@ -270,8 +270,11 @@ class CarController:
 
         #opkr
         aReqValue = CS.scc12["aReqValue"]
-        apply_accel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
-        faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
+        #my
+        #apply_accel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
+        
+        #neokii
+        apply_accel = self.scc_smoother.get_apply_accel(CS, controls.sm, actuators.accel, stopping)
 
         if 0 < CS.lead_distance <= 149:
           # neokii's logic, opkr mod
@@ -321,12 +324,12 @@ class CarController:
                     apply_accel = self.accel - (DT_CTRL * 5.0)
                   elif self.decel_zone2:
                     #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 13.0], [0.0, 1.2, 4.0, 5.0])) #1
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 8.0, 10.0, 15.0], [0.0, 0.2, 2.0, 4.0, 6.0]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 6.0, 8.0, 10.0, 15.0], [0.0, 0.2, 2.0, 3.0, 4.0, 6.0]))
                   elif self.decel_zone3:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0, 8.0, 10.0], [0.0, 0.2, 0.8, 2.0]))               
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 8.0, 10.0], [0.0, 0.2, 1.5, 2.0]))               
                   elif stop_distance <= 50:
                     if CS.out.vEgo*CV.MS_TO_MPH >= 20:
-                      apply_accel = self.accel - (DT_CTRL * 0.3)
+                      apply_accel = self.accel - (DT_CTRL * 0.2)
                     else:
                       apply_accel = self.accel - (DT_CTRL * 0.1)
 
