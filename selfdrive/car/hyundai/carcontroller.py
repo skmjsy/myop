@@ -336,7 +336,10 @@ class CarController:
                 else:
                   #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0, 15.0, 25.0, 30.0], [0.0, 0.1, 0.15, 0.2, 0.4]))
                   #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 15.0, 20.0, 25.0, 30.0], [0.0, 0.1, 0.2, 0.4, 1.0]))
-                  apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 20.0, 25.0, 30.0], [0.0, 0.2, 0.4, 1.0]))
+                  if(CS.out.vEgo*CV.MS_TO_MPH >= 15.0):
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 20.0, 25.0, 30.0], [0.0, 0.2, 0.4, 1.0]))
+                  else:
+                    apply_accel = apply_accel
 
                 str_log = ', {:03.0f}, {:02.0f}, {:}, {:}, {:}'.format(
                           stop_distance, CS.out.vEgo*CV.MS_TO_MPH, self.decel_zone1, self.decel_zone2, self.decel_zone3)
