@@ -321,13 +321,14 @@ class CarController:
               if 0 <= stop_distance < 100:
                 if not CS.out.cruiseState.standstill:
                   if stop_distance < 6.0:
-                    apply_accel = self.accel - (DT_CTRL * 5.0)
+                    apply_accel = self.accel - (DT_CTRL * 1.0)
                   elif self.decel_zone2:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0, 15.0], [0.0, 1.2, 4.0, 6.0]))
-                  #elif self.decel_zone3:
-                  #  apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0], [0.0, 0.15]))
+                  # elif self.decel_zone3:
+                  #   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0], [0.0, 0.15]))
                   elif stop_distance <= 50:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0, 15.0, 25.0, 30.0], [0.0, 0.1, 0.15, 0.2, 0.4]))
+                    #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0, 15.0, 25.0, 30.0], [0.0, 0.1, 0.15, 0.2, 0.4]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 10.0, 15.0, 25.0, 30.0], [0.0, 0.1, 0.15, 0.4, 1.0]))
 
                   str_log = ', {:03.0f}, {:02.0f}, {:}, {:}'.format(
                             stop_distance, CS.out.vEgo*CV.MS_TO_MPH, self.decel_zone2, self.decel_zone3)
@@ -346,7 +347,6 @@ class CarController:
           self.stopped = True
         else:
           self.stopped = False
-
 
         apply_accel = clip(apply_accel if CC.longActive else 0, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
