@@ -315,7 +315,7 @@ class CarController:
                 if CS.out.vEgo*CV.MS_TO_MPH > 18.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = True
                   self.decel_zone3 = False
-                elif CS.out.vEgo*CV.MS_TO_MPH <= 18.0 and not self.decel_zone2 and not self.decel_zone3:
+                elif CS.out.vEgo*CV.MS_TO_MPH <= 15.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = False
                   self.decel_zone3 = True
 
@@ -330,8 +330,8 @@ class CarController:
                   apply_accel = apply_accel
                 else:
                   if CS.out.vEgo*CV.MS_TO_MPH >= 15.0:
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 25.0, 30.0], [0.2, 0.6, 1.5])) #OK
-                    #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 0.4, 1.0]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 25.0, 30.0], [0.2, 0.6, 1.6])) #OK
+                    #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 0.4, 1.0])) #perfect
                   else:
                     apply_accel = apply_accel
 
