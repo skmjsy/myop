@@ -329,7 +329,7 @@ class CarController:
                 else:
                   if CS.out.vEgo*CV.MS_TO_MPH >= 20.0:
                     #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 0.4, 1.0])) #OK
-                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 0.8, 1.5]))
+                    apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 2, 4]))
                   else:
                     apply_accel = apply_accel
 
