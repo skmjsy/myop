@@ -255,7 +255,7 @@ class CarController:
       if self.lo_timer > 200:
         self.lo_timer = 0
         self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
-        self.stopping_zone_1 = ntune_scc_get('StoppingZone_2')
+        self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
 
       if self.frame % 2 == 0:
         set_speed = hud_control.setSpeed
