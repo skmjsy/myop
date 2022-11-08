@@ -88,7 +88,8 @@ class CarController:
     self.decel_zone1 = False
     self.decel_zone2 = False
     self.decel_zone3 = False
-    self.stoppingdist = ntune_scc_get('StoppingDist')
+    self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
+    self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
     self.lo_timer = 0
     self.stopped = False
     self.smooth_start = False
@@ -253,7 +254,8 @@ class CarController:
       self.lo_timer += 1
       if self.lo_timer > 200:
         self.lo_timer = 0
-        self.stoppingdist = ntune_scc_get('StoppingDist')
+        self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
+        self.stopping_zone_1 = ntune_scc_get('StoppingZone_2')
 
       if self.frame % 2 == 0:
         set_speed = hud_control.setSpeed
@@ -309,15 +311,15 @@ class CarController:
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
-              if stop_distance <= 20:
-                if CS.out.vEgo*CV.MS_TO_MPH >= 15.0  and not self.decel_zone2 and not self.decel_zone3:
+              if stop_distance <= self.stopping_zone_2:
+                if CS.out.vEgo*CV.MS_TO_MPH >= 15.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = True
                   self.decel_zone3 = False
-                elif CS.out.vEgo*CV.MS_TO_MPH < 15.0  and not self.decel_zone2 and not self.decel_zone3:
+                elif CS.out.vEgo*CV.MS_TO_MPH < 15.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = False
                   self.decel_zone3 = True
 
-              if 0 <= stop_distance <= self.stoppingdist and not CS.out.cruiseState.standstill:
+              if 0 <= stop_distance <= self.stopping_zone_1 and not CS.out.cruiseState.standstill:
                 if stop_distance < 6.0:
                   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0], [0.0, 3.0]))
                 elif self.decel_zone2:
@@ -331,8 +333,8 @@ class CarController:
                   else:
                     apply_accel = apply_accel
 
-                str_log = ', {:03.0f}, {:02.0f}, {:02.0f}, {:}, {:}'.format(
-                          stop_distance, CS.out.vEgo*CV.MS_TO_MPH, self.stoppingdist, self.decel_zone2, self.decel_zone3)
+                str_log = ', {:03.0f}, {:02.0f}, {:}, {:}, {:02.0f}, {:02.0f}'.format(
+                          stop_distance, CS.out.vEgo*CV.MS_TO_MPH, self.decel_zone2, self.decel_zone3, self.stopping_zone_1, self.stopping_zone_2)
                 self.log.add( '{}'.format( str_log ) )
 
             else:
