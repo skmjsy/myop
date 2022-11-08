@@ -224,7 +224,6 @@ class LongitudinalMpc:
     self.on_stopping = False
     self.stop_line = ntune_scc_enabled("StopAtStopSign")
     self.x_ego_obstacle_cost = 3
-    self.stop_line_offset = 1.0
     self.stop_line_x_offset = 0.
     self.lo_timer = 0
     self.log = Loger()
@@ -246,7 +245,6 @@ class LongitudinalMpc:
     self.params = np.zeros((N+1, PARAM_DIM))
     self.param_tr = T_FOLLOW
     self.x_ego_obstacle_cost = X_EGO_OBSTACLE_COST
-    self.stop_line_offset = 1.0
     self.stop_line_x_offset = 0.
     for i in range(N+1):
       self.solver.set(i, 'x', np.zeros(X_DIM))
@@ -334,7 +332,6 @@ class LongitudinalMpc:
     self.lo_timer += 1
     if self.lo_timer > 200:
       self.lo_timer = 0
-      self.stop_line_offset = ntune_scc_get("STOP_LINE_OFFSET")
       self.stop_line_x_offset = ntune_scc_get("STOP_LINE_X_OFFSET")
 
     self.trafficState = 0
@@ -402,10 +399,7 @@ class LongitudinalMpc:
 
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    if self.stop_line_offset < 0.7 or self.stop_line_offset > 1.2:
-      self.stop_line_offset = 1.0
-
-    stopline3 = (((stopline*0.2)+(x*0.8)) * self.stop_line_offset) + self.stop_line_x_offset
+    stopline3 = ((stopline*0.2)+(x*0.8)) + self.stop_line_x_offset
 
     stopping = True if (self.stop_line and self.trafficState == 1 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
