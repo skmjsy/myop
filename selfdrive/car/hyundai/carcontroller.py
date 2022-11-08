@@ -312,14 +312,15 @@ class CarController:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
 
               if stop_distance <= self.stopping_zone_2:
-                if CS.out.vEgo*CV.MS_TO_MPH >= 15.0 and not self.decel_zone2 and not self.decel_zone3:
+                if CS.out.vEgo*CV.MS_TO_MPH > 18.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = True
                   self.decel_zone3 = False
-                elif CS.out.vEgo*CV.MS_TO_MPH < 15.0 and not self.decel_zone2 and not self.decel_zone3:
+                elif CS.out.vEgo*CV.MS_TO_MPH <= 18.0 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone2 = False
                   self.decel_zone3 = True
 
-              if 0 <= stop_distance <= self.stopping_zone_1 and not CS.out.cruiseState.standstill:
+              #if 0 <= stop_distance <= self.stopping_zone_1 and not CS.out.cruiseState.standstill:
+              if 0 <= stop_distance <= 100.0 and not CS.out.cruiseState.standstill:
                 if stop_distance < 6.0:
                   apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 5.0], [0.0, 3.0]))
                 elif self.decel_zone2:
@@ -328,7 +329,7 @@ class CarController:
                 elif self.decel_zone3:
                   apply_accel = apply_accel
                 else:
-                  if CS.out.vEgo*CV.MS_TO_MPH >= 20.0:
+                  if CS.out.vEgo*CV.MS_TO_MPH >= 15.0:
                     apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 25.0, 30.0], [0.2, 0.6, 1.5])) #OK
                     #apply_accel = self.accel - (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [20.0, 25.0, 30.0], [0.0, 0.4, 1.0]))
                   else:
