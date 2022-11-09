@@ -283,18 +283,22 @@ class CarController:
           stock_weight = 0.0
           if aReqValue > 0.0:
             stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
-          elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
-            stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
+            self.log.add('====>0-0')
+          # elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
+          #   stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
           elif aReqValue < 0.0:
             stock_weight = interp(CS.lead_distance, [4.0, 25.0], [1.0, 0.0])
+            self.log.add('====>0-1')
           else:
             stock_weight = 0.0
 
           if 0 < CS.lead_distance <= 4.0 and not CS.out.cruiseState.standstill: # use radar by force to stop anyway below 4.0m if lead car is detected.
             stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
+            self.log.add('====>0-2')
 
           if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
             stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
+            self.log.add('====>0-3')
 
           if stopping:
             self.stopped = True
@@ -314,6 +318,7 @@ class CarController:
                 if 0 < stop_distance <= 7.0: #force to stop anyway below 4.0m
                   stock_weight = interp(stop_distance, [5.5, 7.0], [1., 0.])
                   apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
+                  self.log.add('====>1-1')
 
               # if stop_distance <= self.stopping_zone_2:
               #   if CS.out.vEgo*CV.MS_TO_MPH > 18.0 and not self.decel_zone2 and not self.decel_zone3:
