@@ -88,8 +88,8 @@ class CarController:
     self.decel_zone1 = False
     self.decel_zone2 = False
     self.decel_zone3 = False
-    self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
-    self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
+    # self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
+    # self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
     self.lo_timer = 0
     self.stopped = False
     self.smooth_start = False
@@ -254,8 +254,8 @@ class CarController:
       self.lo_timer += 1
       if self.lo_timer > 200:
         self.lo_timer = 0
-        self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
-        self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
+        # self.stopping_zone_1 = ntune_scc_get('StoppingZone_1')
+        # self.stopping_zone_2 = ntune_scc_get('StoppingZone_2')
 
       if self.frame % 2 == 0:
         set_speed = hud_control.setSpeed
