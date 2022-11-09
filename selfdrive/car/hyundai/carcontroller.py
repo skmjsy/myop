@@ -310,6 +310,10 @@ class CarController:
 
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
+              if 0 <= stop_distance <= 100.0 and not CS.out.cruiseState.standstill:
+                if 0 < stop_distance <= 7.0: #force to stop anyway below 4.0m
+                  stock_weight = interp(stop_distance, [5.5, 7.0], [1., 0.])
+                  apply_accel = apply_accel * (1.0 - stock_weight) + aReqValue * stock_weight
 
               # if stop_distance <= self.stopping_zone_2:
               #   if CS.out.vEgo*CV.MS_TO_MPH > 18.0 and not self.decel_zone2 and not self.decel_zone3:
@@ -358,8 +362,8 @@ class CarController:
               #       apply_accel = apply_accel
               #       self.log.add('====>5')
 
-              str_log = ', {:03.0f}, {:02.0f}, {:.03f}'.format(
-                        stop_distance, CS.out.vEgo*CV.MS_TO_MPH, apply_accel)
+              str_log = ', {:03.0f}, {:02.0f}, {:.03f}, {:.03f}'.format(
+                        stop_distance, CS.out.vEgo*CV.MS_TO_MPH, apply_accel, aReqValue)
               self.log.add( '{}'.format( str_log ) )
 
           if stopping:
