@@ -306,19 +306,20 @@ class CarController:
             if self.sm['longitudinalPlan'].onStop:
               stop_distance = self.sm['longitudinalPlan'].stopLine[12]
               if 0 <= stop_distance <= 100.0 and not CS.out.cruiseState.standstill:
-                
-                if stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH > 20.0 and not self.decel_zone1 and not self.decel_zone2:
+
+                if stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH > 15.0 and not self.decel_zone1 and not self.decel_zone2:
                   self.decel_zone1 = True
                   self.decel_zone2 = False
-                elif CS.out.vEgo*CV.MS_TO_MPH <= 15.0 and not self.decel_zone1 and not self.decel_zone2:
+                elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH <= 15.0 and not self.decel_zone1 and not self.decel_zone2:
                   self.decel_zone1 = False
                   self.decel_zone2 = True  
 
                 if 0 < stop_distance <= 7.0: #force to stop
-                  accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.5, 2.0], [1.0, 5.0]))
-                  accel2 = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+                  accel2 = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0], [1.0, 2.0])
+                  apply_accel = min(apply_accel, accel2)
                 elif self.decel_zone1:
-                  apply_accel = apply_accel * (DT_CTRL * interp(CS.out.vEgo*CV.MS_TO_MPH, [15.0, 20.0, 25.0], [1.0, 1.5, 2.0]))
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [10.0, 15.0, 20.0, 25.0], [1.1, 1.2, 1.5, 2.0])
+                  apply_accel = min(apply_accel, accel)
                 
 
                 
