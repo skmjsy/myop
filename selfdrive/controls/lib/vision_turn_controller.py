@@ -11,12 +11,12 @@ from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
 _MIN_V = 5.6  # Do not operate under 20km/h
 
-_ENTERING_PRED_LAT_ACC_TH = 1.3  # Predicted Lat Acc threshold to trigger entering turn state. #1.4
+_ENTERING_PRED_LAT_ACC_TH = 1.4  # Predicted Lat Acc threshold to trigger entering turn state. //default 1.3 
 _ABORT_ENTERING_PRED_LAT_ACC_TH = 1.1  # Predicted Lat Acc threshold to abort entering state if speed drops.
 
-_TURNING_LAT_ACC_TH = 1.6  # Lat Acc threshold to trigger turning turn state. #1.4
+_TURNING_LAT_ACC_TH = 1.4  # Lat Acc threshold to trigger turning turn state. //default 1.6 : not working, 1.4 : working
 
-_LEAVING_LAT_ACC_TH = 1.3  # Lat Acc threshold to trigger leaving turn state. #1.2
+_LEAVING_LAT_ACC_TH = 1.2  # Lat Acc threshold to trigger leaving turn state. //default 1.3 : too long
 _FINISH_LAT_ACC_TH = 1.1  # Lat Acc threshold to trigger end of turn cycle.
 
 _EVAL_STEP = 5.  # mts. Resolution of the curvature evaluation.
