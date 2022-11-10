@@ -5,18 +5,18 @@ from common.numpy_fast import interp
 from common.params import Params
 from common.realtime import sec_since_boot
 from common.conversions import Conversions as CV
-from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
+from selfdrive.controls.lib.lateral_planner import TRAJECTORY_SIZE
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
 
 _MIN_V = 5.6  # Do not operate under 20km/h
 
-_ENTERING_PRED_LAT_ACC_TH = 1.4  # Predicted Lat Acc threshold to trigger entering turn state. //default 1.3 
+_ENTERING_PRED_LAT_ACC_TH = 1.3  # Predicted Lat Acc threshold to trigger entering turn state. #1.4
 _ABORT_ENTERING_PRED_LAT_ACC_TH = 1.1  # Predicted Lat Acc threshold to abort entering state if speed drops.
 
-_TURNING_LAT_ACC_TH = 1.4  # Lat Acc threshold to trigger turning turn state. //default 1.6 : not working, 1.4 : working
+_TURNING_LAT_ACC_TH = 1.6  # Lat Acc threshold to trigger turning turn state. #1.4
 
-_LEAVING_LAT_ACC_TH = 1.2  # Lat Acc threshold to trigger leaving turn state. //default 1.3 : too long
+_LEAVING_LAT_ACC_TH = 1.3  # Lat Acc threshold to trigger leaving turn state. #1.2
 _FINISH_LAT_ACC_TH = 1.1  # Lat Acc threshold to trigger end of turn cycle.
 
 _EVAL_STEP = 5.  # mts. Resolution of the curvature evaluation.
@@ -35,11 +35,8 @@ _ENTERING_SMOOTH_DECEL_BP = [1.3, 3.]  # absolute value of lat acc ahead
 
 # Lookup table for the acceleration for the TURNING state
 # depending on the current lateral acceleration of the vehicle.
-#_TURNING_ACC_V = [1.2, 0.94, 0.9, 0.8, -0.1]  # acc value
-#_TURNING_ACC_BP = [1.5, 10, 12, 14, 16]  # absolute value of current lat acc
-
-_TURNING_ACC_V = [0.5, 0., -0.4]  # acc value
-_TURNING_ACC_BP = [1.5, 2.3, 3.]  # absolute value of current lat acc
+_TURNING_ACC_V = [1.2, 0.94, 0.9, 0.8, -0.1]  # acc value
+_TURNING_ACC_BP = [1.5, 10, 12, 14, 16]  # absolute value of current lat acc
 
 _LEAVING_ACC = 0.5  # Confortble acceleration to regain speed while leaving a turn.
 
