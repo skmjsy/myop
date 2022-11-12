@@ -319,8 +319,8 @@ class CarController:
                   self.decel_zone3 = False
 
                 if 0 < stop_distance <= 7.0: #force to stop
-                  accel2 = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0], [1.0, 1.5]) #ok
-                  apply_accel = min(apply_accel, accel2)
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0], [1.0, 1.5]) #ok
+                  apply_accel = min(apply_accel, accel)
                 elif self.decel_zone1:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 1.5, 2.0]) #ok
                   apply_accel = min(apply_accel, accel)
@@ -331,9 +331,10 @@ class CarController:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 2.0, 2.5]) #test
                   apply_accel = min(apply_accel, accel)
 
+              apply_accel = min(apply_accel, self.accel)
 
-              str_log = ', {:03.0f}, {:02.0f}, {:.03f}, {:.03f}, {:.03f}, {:.03f}'.format(
-                        stop_distance, CS.out.vEgo*CV.MS_TO_MPH, apply_accel, aReqValue, accel, accel2)
+              str_log = ', {:03.0f}, {:02.0f}, {:.03f}, {:}, {:}, {:}'.format(
+                        stop_distance, CS.out.vEgo*CV.MS_TO_MPH, apply_accel, self.decel_zone1, self.decel_zone2, self.decel_zone3)
               self.log.add( '{}'.format( str_log ) )
             else:
               self.decel_zone1 = False
