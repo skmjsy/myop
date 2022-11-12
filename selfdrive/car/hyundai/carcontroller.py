@@ -317,7 +317,8 @@ class CarController:
                   apply_accel = min(apply_accel, accel2)
                 elif self.decel_zone1:
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 15.0, 20.0, 25.0], [1.0, 1.2, 1.3, 1.5])
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 1.5, 2.0])
+                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 1.5, 2.0]) #ok
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 2.0, 2.5])
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone2:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [0.92, 1.0]) #0.90
