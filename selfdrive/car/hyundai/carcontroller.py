@@ -339,17 +339,15 @@ class CarController:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [0.92, 1.0]) #ok
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone3:
-                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 2.5, 3.0, 3.5]) #ok
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.0, 3.5, 4.0]) #test
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.5, 4.0, 4.5]) #test
                   apply_accel = min(apply_accel, accel)   
                 elif self.decel_zone4:
-                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 2.5, 3.0, 3.5]) #ok
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.0, 3.5, 4.0]) #test
                   apply_accel = min(apply_accel, accel)           
                 # else:
                 #   apply_accel = min(apply_accel, self.accel)
 
-              str_log = ', {:03.0f}, {:02.0f}, {:.03f}, {:}, {:}, {:}'.format(
+              str_log = ', {:03.0f}, {:02.0f}, {:.03f}, {:}, {:}, {:}, {:}'.format(
                         stop_distance, CS.out.vEgo*CV.MS_TO_MPH, apply_accel, self.decel_zone1, self.decel_zone2, self.decel_zone3, self.decel_zone4)
               self.log.add( '{}'.format( str_log ) )
             else:
