@@ -412,8 +412,8 @@ class LongitudinalMpc:
       if v_ego < 0.5:
         stopline3 *= 0.0
 
-      self.x_ego_obstacle_cost = 6
-      self.set_weights(prev_accel_constraint)
+      # self.x_ego_obstacle_cost = 6
+      # self.set_weights(prev_accel_constraint)
 
       self.source = SOURCES[3]
       self.params[:,2] = stopline3
