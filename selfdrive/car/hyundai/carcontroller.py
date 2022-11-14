@@ -305,7 +305,7 @@ class CarController:
 
               if 0 <= stop_distance <= 100.0 and not CS.out.cruiseState.standstill:
 
-                if stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH >= 20.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3:
+                if stop_distance <= 30 and CS.out.vEgo*CV.MS_TO_MPH >= 22.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3:
                   self.decel_zone1 = False
                   self.decel_zone2 = False
                   self.decel_zone3 = True
@@ -331,7 +331,7 @@ class CarController:
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone3:
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 2.5, 3.0, 3.5]) #ok
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.2, 2.6, 3.1, 3.5]) #test
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.0, 3.5, 4.0]) #test
                   apply_accel = min(apply_accel, accel)              
                 # else:
                 #   apply_accel = min(apply_accel, self.accel)
