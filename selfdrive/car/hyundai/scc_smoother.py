@@ -238,7 +238,7 @@ class SccSmoother:
       #             and (activated_hda if Params().get_bool("AutoCruiseSetDependsOnNda") else True) 
 
     ascc_enabled = CS.acc_mode and enabled and CS.cruiseState_enabled \
-                   and 30 < CS.cruiseState_speed < 255 and not CS.brake_pressed
+                   and 1 < CS.cruiseState_speed < 255 and not CS.brake_pressed
 
     if not self.longcontrol:
       # janpoo6427
