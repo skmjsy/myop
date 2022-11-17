@@ -311,12 +311,12 @@ class CarController:
                   self.decel_zone2 = False
                   self.decel_zone3 = True
                   self.decel_zone4 = False
-                elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH >= 20.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3 and not self.decel_zone4:
+                elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH >= 18.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3 and not self.decel_zone4:
                   self.decel_zone1 = False
                   self.decel_zone2 = False
                   self.decel_zone3 = False
                   self.decel_zone4 = True
-                elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH > 15.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3 and not self.decel_zone4:
+                elif stop_distance <= 20 and CS.out.vEgo*CV.MS_TO_MPH > 14.0 and not self.decel_zone1 and not self.decel_zone2 and not self.decel_zone3 and not self.decel_zone4:
                   self.decel_zone1 = True
                   self.decel_zone2 = False
                   self.decel_zone3 = False
@@ -327,7 +327,7 @@ class CarController:
                   self.decel_zone3 = False
                   self.decel_zone4 = False
 
-                if 0 < stop_distance <= 7.0: #force to stop
+                if 0 < stop_distance <= 8.0: #force to stop
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0], [1.0, 1.5]) #ok
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0], [1.0, 1.5, 3.0]) #test
                   apply_accel = min(apply_accel, accel)
@@ -340,13 +340,13 @@ class CarController:
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone3:
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.5, 4.0, 4.5]) #test
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0], [1.5, 2.0, 4.5]) #test
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
                   apply_accel = min(apply_accel, accel)   
                 elif self.decel_zone4:
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.0, 3.5, 4.0]) #test
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0], [1.5, 2.0, 4.5]) #test
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
                   apply_accel = min(apply_accel, accel)    
-                elif 60 <= stop_distance:
+                elif 50 <= stop_distance:
                   apply_accel = min(apply_accel, self.accel)
                 # else:
                 #   apply_accel = min(apply_accel, self.accel)
