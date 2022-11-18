@@ -329,10 +329,10 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    self.lo_timer += 1
-    if self.lo_timer > 200:
-      self.lo_timer = 0
-      self.stop_line_x_offset = ntune_scc_get("STOP_LINE_X_OFFSET")
+    # self.lo_timer += 1
+    # if self.lo_timer > 200:
+    #   self.lo_timer = 0
+    #   self.stop_line_x_offset = ntune_scc_get("STOP_LINE_X_OFFSET")
 
     self.trafficState = 0
     v_ego = self.x0[1]
@@ -399,9 +399,14 @@ class LongitudinalMpc:
 
     x = (x[N] + 5.0) * np.ones(N+1)
 
-    stopline3 = ((stopline*0.2)+(x*0.8)) + self.stop_line_x_offset
+    stopline3 = ((stopline*0.2)+(x*0.8))
 
-    stopping = True if (self.stop_line and self.trafficState == 1 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
+    if stopline3 >= 50.:
+      self.stop_line_x_offset = interp(v_ego, [10.0, 12.0, 13.0], [0., -1.0, -2.0])
+
+    stopline3 += self.stop_line_x_offset 
+
+    stopping = True if (self.stop_line and probe > 0.5 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
     
     if stopping:
       # str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(

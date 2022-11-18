@@ -271,8 +271,11 @@ class CarController:
         #opkr
         aReqValue = CS.scc12["aReqValue"]
 
+        #my
+        apply_accel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
+
         #neokii
-        apply_accel = self.scc_smoother.get_apply_accel(CS, controls.sm, actuators.accel, stopping)
+        #apply_accel = self.scc_smoother.get_apply_accel(CS, controls.sm, actuators.accel, stopping)
 
         if 0 < CS.lead_distance <= 149:
           # neokii's logic, opkr mod
@@ -284,8 +287,8 @@ class CarController:
           else:
             stock_weight = 0.0
 
-          # if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
-          #   stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
+          if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
+            stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
 
           if stopping:
             self.stopped = True
@@ -297,7 +300,7 @@ class CarController:
         else:
           self.stopped = False
           accel = 0.0
-          accel2 = 0.0
+
           if self.stopsign_enabled:
             self.sm.update(0)
 
@@ -332,20 +335,21 @@ class CarController:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0], [1.0, 1.5, 3.0]) #test
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone1:
-                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 1.5, 2.0]) #ok
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 2.5, 3.0]) #test
+                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.0, 1.1, 1.2, 2.5, 3.0]) #ok
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone2:
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [0.92, 1.0]) #ok
                   apply_accel = min(apply_accel, accel)
                 elif self.decel_zone3:
-                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.5, 4.0, 4.5]) #test
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
-                  apply_accel = min(apply_accel, accel)   
+                  if (apply_accel < 0.):
+                    accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
+                    apply_accel = min(apply_accel, accel)   
+                  else:
+                    apply_accel = min(apply_accel, self.accel)
+
                 elif self.decel_zone4:
-                  #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0, 15.0, 20.0, 25.0], [1.5, 2.0, 3.0, 3.5, 4.0]) #test
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
-                  apply_accel = min(apply_accel, accel)    
+                  apply_accel = min(apply_accel, accel, self.accel)    
                 elif 50 <= stop_distance:
                   apply_accel = min(apply_accel, self.accel)
                 # else:
