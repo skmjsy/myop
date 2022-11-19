@@ -329,10 +329,9 @@ class LongitudinalMpc:
 
   def update(self, carstate, radarstate, model, v_cruise, x, v, a, j, prev_accel_constraint):
     #opkr
-    # self.lo_timer += 1
-    # if self.lo_timer > 200:
-    #   self.lo_timer = 0
-    #   self.stop_line_x_offset = ntune_scc_get("STOP_LINE_X_OFFSET")
+    self.lo_timer += 1
+    if self.lo_timer > 200:
+      self.lo_timer = 0
 
     self.trafficState = 0
     v_ego = self.x0[1]
@@ -402,7 +401,7 @@ class LongitudinalMpc:
     stopline3 = ((stopline*0.2)+(x*0.8))
 
     if stopline3[N] >= 50.:
-      self.stop_line_x_offset = interp(v_ego, [10.0, 12.0, 13.0], [0., 1.0, 2.0])
+      self.stop_line_x_offset = interp(v_ego, [10.0, 12.0, 13.0], [0., 1.5, 2.5])
 
     stopline3 += self.stop_line_x_offset 
 
