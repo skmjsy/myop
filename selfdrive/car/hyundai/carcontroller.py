@@ -290,14 +290,12 @@ class CarController:
           if aReqValue > 0.0:
             stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
           elif aReqValue < 0.0:
-            stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
-          elif aReqValue < 0.0:
             stock_weight = interp(CS.lead_distance, [3.5, 25.0], [1.0, 0.0])
           else:
             stock_weight = 0.0            
 
-          # if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
-          #   stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
+          if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
+            stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
 
           if stopping:
             self.stopped = True
@@ -339,7 +337,7 @@ class CarController:
                   self.decel_zone3 = False
                   self.decel_zone4 = False
 
-                if 0 < stop_distance <= 6.0 and not self.decel_zone3: #force to stop
+                if 0 < stop_distance <= 6.0 and not self.decel_zone3  and not self.decel_zone4: #force to stop
                   #accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0], [1.0, 1.5]) #ok
                   accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [0.0, 4.0, 10.0], [1.0, 1.5, 3.0]) #test
                   apply_accel = min(apply_accel, accel)
@@ -355,7 +353,6 @@ class CarController:
                     apply_accel = min(apply_accel, accel)   
                   else:
                     apply_accel = min(apply_accel, self.accel)
-
                 elif self.decel_zone4:
                   if (apply_accel < 0.):
                     accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
