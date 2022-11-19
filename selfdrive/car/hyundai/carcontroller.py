@@ -357,8 +357,11 @@ class CarController:
                     apply_accel = min(apply_accel, self.accel)
 
                 elif self.decel_zone4:
-                  accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
-                  apply_accel = min(apply_accel, accel, self.accel)    
+                  if (apply_accel < 0.):
+                    accel = apply_accel * interp(CS.out.vEgo*CV.MS_TO_MPH, [5.0, 10.0], [1.5, 4.5]) #test
+                    apply_accel = min(apply_accel, accel)   
+                  else:
+                    apply_accel = min(apply_accel, self.accel)  
                 elif 50 <= stop_distance:
                   apply_accel = min(apply_accel, self.accel)
                 # else:
