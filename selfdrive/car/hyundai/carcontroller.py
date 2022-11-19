@@ -287,6 +287,15 @@ class CarController:
           # else:
           #   stock_weight = 0.0
 
+          if aReqValue > 0.0:
+            stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
+          elif aReqValue < 0.0:
+            stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
+          elif aReqValue < 0.0:
+            stock_weight = interp(CS.lead_distance, [3.5, 25.0], [1.0, 0.0])
+          else:
+            stock_weight = 0.0            
+
           # if 5.5 < CS.lead_distance <= 6.5 and aReqValue < 0.0 and not CS.out.cruiseState.standstill:
           #   stock_weight = interp(CS.lead_distance, [5.5, 6.5], [0.2, 1.0])
 
