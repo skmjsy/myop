@@ -402,7 +402,8 @@ class LongitudinalMpc:
     stopline3 = ((stopline*0.2)+(x*0.8))
 
     if stopline3[N] >= 50.:
-      self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -3.0, -4.4, -5.5])
+      #self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -3.0, -4.5, -5.5])
+      self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -1.0, -2.0, -3.0])
 
     stopline3 += self.stop_line_x_offset 
 
