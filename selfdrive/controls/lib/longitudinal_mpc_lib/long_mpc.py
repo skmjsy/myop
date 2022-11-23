@@ -404,6 +404,10 @@ class LongitudinalMpc:
     if stopline3[N] >= 50.:
       #self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -3.0, -4.5, -5.5])
       self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -1.0, -2.0, -3.0])
+      
+      str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
+                model.stopLine.x, x[0], stopline3[N], v_ego*CV.MS_TO_MPH, self.stop_line_x_offset)
+      self.log.add( '{}'.format( str_log ) )
 
     stopline3 += self.stop_line_x_offset 
 
