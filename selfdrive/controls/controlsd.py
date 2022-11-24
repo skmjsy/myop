@@ -535,6 +535,10 @@ class Controls:
     elif vtcState == 3:	
       self.events.add(EventName.visionleaving)	
 
+    #opkr
+    if self.CC.e2e_standstill:
+      self.events.add(EventName.chimeAtResume)      
+
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
     self.soft_disable_timer = max(0, self.soft_disable_timer - 1)
