@@ -97,7 +97,7 @@ class CarController:
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
     self.log = Loger()
 
-    self.e2e_standstill_enable = self.params.get_bool("DepartChimeAtResume")
+    self.e2e_standstill_enable = param.get_bool("DepartChimeAtResume")
     self.e2e_standstill = False
     self.e2e_standstill_stat = False
     self.e2e_standstill_timer = 0
