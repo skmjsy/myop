@@ -219,11 +219,13 @@ class CarController:
           self.e2e_standstill = False
           self.e2e_standstill_stat = False
           self.e2e_standstill_timer = 0
-        elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 30 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+        #elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 30 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+        elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].trafficState == 2 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
           self.e2e_standstill = True
           self.e2e_standstill_stat = False
           self.e2e_standstill_timer = 0
-        elif 0 < self.sm['longitudinalPlan'].e2eX[12] < 10 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+        #elif 0 < self.sm['longitudinalPlan'].e2eX[12] < 10 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+        elif self.sm['longitudinalPlan'].trafficState == 1 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
           self.e2e_standstill_timer += 1
           if self.e2e_standstill_timer > 300:
             self.e2e_standstill_timer = 101
