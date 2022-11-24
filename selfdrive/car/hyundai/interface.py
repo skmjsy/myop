@@ -456,7 +456,7 @@ class CarInterface(CarInterfaceBase):
 
     #opkr
     if self.CC.e2e_standstill:
-      self.events.add(EventName.chimeAtResume)  
+      events.add(EventName.chimeAtResume)  
       
   # handle button presses
     for b in ret.buttonEvents:
