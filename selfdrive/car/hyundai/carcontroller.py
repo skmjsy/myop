@@ -97,6 +97,11 @@ class CarController:
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
     self.log = Loger()
 
+    self.e2e_standstill_enable = self.params.get_bool("DepartChimeAtResume")
+    self.e2e_standstill = False
+    self.e2e_standstill_stat = False
+    self.e2e_standstill_timer = 0
+
     self.scc_smoother = SccSmoother()
     self.last_blinker_frame = 0
     self.prev_active_cam = False
@@ -201,6 +206,32 @@ class CarController:
 
     self.update_auto_resume(CC, CS, clu11_speed, can_sends)
     self.update_scc(CC, CS, actuators, controls, hud_control, can_sends)
+
+    #opkr
+    if self.e2e_standstill_enable:
+      try:
+        if self.e2e_standstill:
+          self.e2e_standstill_timer += 1
+          if self.e2e_standstill_timer > 100:
+            self.e2e_standstill = False
+            self.e2e_standstill_timer = 0
+        elif CS.clu_Vanz > 0:
+          self.e2e_standstill = False
+          self.e2e_standstill_stat = False
+          self.e2e_standstill_timer = 0
+        elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 30 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+          self.e2e_standstill = True
+          self.e2e_standstill_stat = False
+          self.e2e_standstill_timer = 0
+        elif 0 < self.sm['longitudinalPlan'].e2eX[12] < 10 and self.sm['longitudinalPlan'].stopLine[12] < 10 and CS.clu_Vanz == 0:
+          self.e2e_standstill_timer += 1
+          if self.e2e_standstill_timer > 300:
+            self.e2e_standstill_timer = 101
+            self.e2e_standstill_stat = True
+        else:
+          self.e2e_standstill_timer = 0
+      except:
+        pass
 
     # 20 Hz LFA MFA message
     if self.frame % 5 == 0:

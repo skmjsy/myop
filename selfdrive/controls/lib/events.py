@@ -926,4 +926,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       Priority.HIGH, VisualAlert.none, AudibleAlert.slowingDownSpeed, 2.),
   },
 
+  EventName.chimeAtResume: {
+    ET.WARNING: Alert(
+      tr(192),
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.dingdong, 3.),
+  },
 }
