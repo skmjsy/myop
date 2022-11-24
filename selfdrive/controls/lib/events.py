@@ -928,7 +928,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.chimeAtResume: {
     ET.WARNING: Alert(
-      tr(192),
+      "Chime for Depart",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.dingdong, 3.),
