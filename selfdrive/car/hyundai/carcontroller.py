@@ -234,6 +234,7 @@ class CarController:
             self.e2e_standstill_timer = 101
             self.e2e_standstill_stat = True
             self.log.add('self.e2e_standstill_stat = True')
+            self.log.add(self.sm['longitudinalPlan'].e2eX[12])
         else:
           self.e2e_standstill_timer = 0
       except:
