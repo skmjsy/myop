@@ -1989,7 +1989,7 @@ struct Event {
     wideRoadEncodeData @88 :EncodeData;
 
     #dp
-    liveMapData @90: LiveMapData;
+    liveMapData @91: LiveMapData;
 
     # *********** legacy + deprecated ***********
     model @9 :Legacy.ModelData; # TODO: rename modelV2 and mark this as deprecated
