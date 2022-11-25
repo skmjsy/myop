@@ -387,15 +387,15 @@ class LongitudinalMpc:
     probe = model.stopLine.prob if abs(carstate.steeringAngleDeg) < 20 else 0.0
     startSign = v[-1] > 5.0
     stopSign = (probe > 0.3) and ((v[-1] < 3.0) or (v[-1] < v_ego*0.95))
-    
+
     if self.status and (radarstate.leadOne.dRel - x[N]) < 2.0:
-      self.trafficState = 0 # "OFF"  onroad.cc - trafficLight 
+      self.trafficState = 0 # "OFF"  onroad.cc - trafficLight
     elif stopSign:
       self.trafficState = 1 # "RED"
     elif startSign:
       self.trafficState = 2 # "GREEN"
 
-    stopline = (model.stopLine.x + 5.0) * np.ones(N+1)   
+    stopline = (model.stopLine.x + 5.0) * np.ones(N+1)
 
     x = (x[N] + 5.0) * np.ones(N+1)
 
@@ -405,10 +405,10 @@ class LongitudinalMpc:
       #self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -3.0, -4.5, -5.5])
       self.stop_line_x_offset = interp(v_ego, [9.0, 10.0, 12.0, 13.0], [0., -1.0, -1.5, -3.0])
 
-    stopline3 += self.stop_line_x_offset 
+    stopline3 += self.stop_line_x_offset
 
     stopping = True if (self.stop_line and self.trafficState == 1 and v_ego*CV.MS_TO_MPH <= 50. and not self.status and not carstate.brakePressed and not carstate.gasPressed) else False
-    
+
     if stopping:
       # str_log = ', {:03.0f}, {:03.0f}, {:03.0f}, {:02.0f}, {:03.0f},'.format(
       #           model.stopLine.x, x[0], stopline3[N], v_ego*CV.MS_TO_MPH, self.stop_line_x_offset)
