@@ -15,6 +15,8 @@ from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDX
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N
 from selfdrive.swaglog import cloudlog
 from selfdrive.controls.lib.vision_turn_controller import VisionTurnController
+from selfdrive.controls.lib.speed_limit_controller import SpeedLimitController, SpeedLimitResolver
+from selfdrive.controls.lib.turn_speed_controller import TurnSpeedController
 from selfdrive.controls.lib.events import Events
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
@@ -67,7 +69,9 @@ class Planner:
     #dp
     self.t_uniform = np.arange(0.0, T_IDXS_MPC[-1] + 0.5, 0.5)
     self.vision_turn_controller = VisionTurnController(CP)
+    self.speed_limit_controller = SpeedLimitController()
     self.events = Events()
+    self.turn_speed_controller = TurnSpeedController()
 
   def parse_model(self, model_msg):
     if (len(model_msg.position.x) == 33 and
@@ -172,7 +176,18 @@ class Planner:
     longitudinalPlan.longitudinalPlanSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
     longitudinalPlan.visionTurnControllerState = self.vision_turn_controller.state
     longitudinalPlan.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
+
+    longitudinalPlan.speedLimitControlState = self.speed_limit_controller.state
+    longitudinalPlan.speedLimit = float(self.speed_limit_controller.speed_limit)
+    longitudinalPlan.speedLimitOffset = float(self.speed_limit_controller.speed_limit_offset)
+    longitudinalPlan.distToSpeedLimit = float(self.speed_limit_controller.distance)
+    longitudinalPlan.isMapSpeedLimit = bool(self.speed_limit_controller.source == SpeedLimitResolver.Source.map_data)
     longitudinalPlan.eventsDEPRECATED = self.events.to_msg()
+
+    longitudinalPlan.turnSpeedControlState = self.turn_speed_controller.state
+    longitudinalPlan.turnSpeed = float(self.turn_speed_controller.speed_limit)
+    longitudinalPlan.distToTurn = float(self.turn_speed_controller.distance)
+    longitudinalPlan.turnSign = int(self.turn_speed_controller.turn_sign)
 
     longitudinalPlan.fcw = self.fcw
 
@@ -196,6 +211,8 @@ class Planner:
     # Update controllers
     self.vision_turn_controller.update(enabled, v_ego, a_ego, v_cruise, sm)
     self.events = Events()
+    self.speed_limit_controller.update(enabled, v_ego, a_ego, sm, v_cruise, self.events)
+    self.turn_speed_controller.update(enabled, v_ego, a_ego, sm)
 
     # Pick solution with lowest velocity target.
     a_solutions = {'cruise': float("inf")}
@@ -204,6 +221,14 @@ class Planner:
     if self.vision_turn_controller.is_active:
       a_solutions['turn'] = self.vision_turn_controller.a_target
       v_solutions['turn'] = self.vision_turn_controller.v_turn
+
+    if self.speed_limit_controller.is_active:
+      a_solutions['limit'] = self.speed_limit_controller.a_target
+      v_solutions['limit'] = self.speed_limit_controller.speed_limit_offseted
+
+    if self.turn_speed_controller.is_active:
+      a_solutions['turnlimit'] = self.turn_speed_controller.a_target
+      v_solutions['turnlimit'] = self.turn_speed_controller.speed_limit
 
     source = min(v_solutions, key=v_solutions.get)
 
