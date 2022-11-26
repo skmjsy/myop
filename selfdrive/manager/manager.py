@@ -108,7 +108,7 @@ def manager_init() -> None:
 
     ("ShowTrafficSignal", "0"),
     {"OsmLocationName", "us-west"},
-    {"OsmLocationTitle", "US - West"},
+    #{"OsmLocationTitle", "US - West"},
     {"OsmLocationUrl", "https://thecorgirosie-my.sharepoint.com/:u:/p/jason_wen/EYWdXcNpOhJCuOLymUHSwH4BwdRddfiYEbZAK1ltd-hZJA?e=TW5ia4&download=1"},
     {"OsmDbUpdatesCheck", "1"},
     {"OsmLocal", "1"},
