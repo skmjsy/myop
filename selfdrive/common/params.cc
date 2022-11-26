@@ -253,9 +253,11 @@ std::unordered_map<std::string, uint32_t> keys = {
 
     {"ShowTrafficSignal", PERSISTENT},
     {"OsmLocationName", PERSISTENT},
+    {"OsmLocationTitle", PERSISTENT},
     {"OsmLocationUrl", PERSISTENT},
     {"OsmDbUpdatesCheck", PERSISTENT},
     {"OsmLocal", PERSISTENT},
+    {"OsmLocalDb", PERSISTENT},
     {"OsmWayTest", PERSISTENT},
 
 };
