@@ -101,18 +101,18 @@ def manager_init() -> None:
     ("UseNpilotManager", "0"),
 
     #sunny Speed Control
-    ("SpeedLimitControl", "0"),
+    ("SpeedLimitControl", "1"),
     ("SpeedLimitPercOffset", "0"),
-    ("TurnSpeedControl", "0"),
-    ("TurnVisionControl", "0"),
+    ("TurnSpeedControl", "1"),
+    ("TurnVisionControl", "1"),
 
     ("ShowTrafficSignal", "0"),
     ("OsmLocationName", "us-west"),
     ("OsmLocationTitle", "US - West"),
     ("OsmLocationUrl", "https://thecorgirosie-my.sharepoint.com/:u:/p/jason_wen/EYWdXcNpOhJCuOLymUHSwH4BwdRddfiYEbZAK1ltd-hZJA?e=TW5ia4&download=1"),
-    ("OsmDbUpdatesCheck", "1"),
-    ("OsmLocal", "1"),
-    ("OsmLocalDb", "1"),
+    ("OsmDbUpdatesCheck", "0"),
+    ("OsmLocal", "0"),
+    ("OsmLocalDb", "0"),
     ("OsmWayTest", "30023440"),
 
 
