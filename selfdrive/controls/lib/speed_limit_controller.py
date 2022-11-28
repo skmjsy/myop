@@ -1,5 +1,6 @@
 import numpy as np
 import time
+from common.log import Loger
 from common.numpy_fast import interp
 from enum import IntEnum
 from cereal import log, car
@@ -67,6 +68,7 @@ class SpeedLimitResolver():
     self.speed_limit = 0.
     self.distance = 0.
     self.source = SpeedLimitResolver.Source.none
+    self.log = Loger()
 
   def resolve(self, v_ego, current_speed_limit, sm):
     self._v_ego = v_ego
@@ -95,6 +97,7 @@ class SpeedLimitResolver():
       self._limit_solutions[SpeedLimitResolver.Source.map_data] = 0.
       self._distance_solutions[SpeedLimitResolver.Source.map_data] = 0.
       _debug('SL: No map data for speed limit')
+      self.log.add('SL: No map data for speed limit')
       return
 
     #if not self._sm.updated[sock]:
@@ -246,6 +249,7 @@ class SpeedLimitController():
     self._state_prev = SpeedLimitControlState.inactive
     self._gas_pressed = False
     self._a_target = 0.
+    self._log = Loger()
 
   @property
   def a_target(self):
@@ -299,6 +303,7 @@ class SpeedLimitController():
       self._is_enabled = self._params.get_bool("SpeedLimitControl")
       self._offset_enabled = self._params.get_bool("SpeedLimitPercOffset")
       _debug(f'Updated Speed limit params. enabled: {self._is_enabled}, with offset: {self._offset_enabled}')
+      self._log(f'Updated Speed limit params. enabled: {self._is_enabled}, with offset: {self._offset_enabled}')
       self._last_params_update = time
 
   def _update_calculations(self):
