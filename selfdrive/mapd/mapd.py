@@ -205,14 +205,14 @@ class MapD():
 
   def publish(self, pm, sm):
     # Ensure we have a route currently located
-#    if self.route is None or not self.route.located:
-#      _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
-#      return
+    if self.route is None or not self.route.located:
+      _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
+      return
 
     # Ensure we have a route update since last publish
-#    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-#      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
-#      return
+    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
+      return
     
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
