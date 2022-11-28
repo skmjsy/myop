@@ -215,11 +215,11 @@ _WAY_NODES_COORDS_01 = [
 mockNodesData01 = MockNodesData(_WAY_NODES_COORDS_01)
 
 # OSM Query around B96 south of Berlin
-mockOSMResponse01 = MockOSMQueryResponse('selfdrive/mapd/test/mock_osm_response_01.xml',
+mockOSMResponse01 = MockOSMQueryResponse('/data/openpilot/selfdrive/mapd/test/mock_osm_response_01.xml',
                                          [52.31400353586984, 13.447158941786366])
 
 # OSM Query on curvy town area south of Germany.
-mockOSMResponse02 = MockOSMQueryResponse('selfdrive/mapd/test/mock_osm_response_02.xml',
+mockOSMResponse02 = MockOSMQueryResponse('/data/openpilot/selfdrive/mapd/test/mock_osm_response_02.xml',
                                          [48.16573269276522, 9.81418473659117])
 
 mockWayCollection01 = WayCollection(mockOSMResponse01.ways, mockOSMResponse01.query_center)
