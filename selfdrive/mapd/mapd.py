@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import threading
 from traceback import print_exception
+from common.log import Loger
 import numpy as np
 from time import strftime, gmtime
 import cereal.messaging as messaging
@@ -57,6 +58,7 @@ class MapD():
     self._lock = threading.RLock()
     self._road_name_last = ""
     self._road_name_last_timed_out = 0.
+    self.log = Loger()
 
     # dp - use LastGPSPosition as init position (if we are in a undercover car park?)
     # this way we can prefetch osm data before we get a fix.
@@ -107,9 +109,11 @@ class MapD():
   def _query_osm_not_blocking(self):
     def query(osm, location_deg, location_rad, radius):
       _debug(f'Mapd: Start query for OSM map data at {location_deg}')
+      self.log.add(f'Mapd: Start query for OSM map data at {location_deg}')
       lat, lon = location_deg
       areas, ways = osm.fetch_road_ways_around_location(lat, lon, radius)
       _debug(f'Mapd: Query to OSM finished with {len(ways)} ways')
+      self.log.add(f'Mapd: Query to OSM finished with {len(ways)} ways')
 
       # Only issue an update if we received some ways. Otherwise it is most likely a conectivity issue.
       # Will retry on next loop.
@@ -209,8 +213,7 @@ class MapD():
 #    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
 #      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
 #      return
-
-    _debug(self.route.current_speed_limit)
+    
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
     speed_limit = self.route.current_speed_limit
@@ -219,6 +222,10 @@ class MapD():
     horizon_mts = self.gps_speed * LOOK_AHEAD_HORIZON_TIME
     next_turn_speed_limit_sections = self.route.next_curvature_speed_limit_sections(horizon_mts)
     current_road_name = "" if self.route.current_road_name is None else str(self.route.current_road_name).strip()
+
+    self.log.add(speed_limit)
+    self.log.add(current_road_name)
+
 
     map_data_msg = messaging.new_message('liveMapData')
     map_data_msg.valid = sm.all_alive(service_list=['gpsLocationExternal']) and \
@@ -267,7 +274,7 @@ class MapD():
 
     pm.send('liveMapData', map_data_msg)
     _debug(f'Mapd *****: Publish: \n{map_data_msg}\n********', log_to_cloud=False)
-
+    self.log.add(f'Mapd *****: Publish: \n{map_data_msg}\n********')
 
 # provides live map data information
 def mapd_thread(sm=None, pm=None):
