@@ -400,7 +400,7 @@ struct CarState::CruiseState {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e64e81478e6e60af, 2, 0)
+    CAPNP_DECLARE_STRUCT_HEADER(e64e81478e6e60af, 3, 0)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -1399,6 +1399,10 @@ public:
 
   inline bool getNonAdaptive() const;
 
+  inline float getSpeedCluster() const;
+
+  inline float getSpeedLimit() const;
+
   inline bool getEnabledAcc() const;
 
 private:
@@ -1446,6 +1450,12 @@ public:
 
   inline bool getNonAdaptive();
   inline void setNonAdaptive(bool value);
+
+  inline float getSpeedCluster();
+  inline void setSpeedCluster(float value);
+
+  inline float getSpeedLimit();
+  inline void setSpeedLimit(float value);
 
   inline bool getEnabledAcc();
   inline void setEnabledAcc(bool value);
@@ -5176,6 +5186,34 @@ inline bool CarState::CruiseState::Builder::getNonAdaptive() {
 inline void CarState::CruiseState::Builder::setNonAdaptive(bool value) {
   _builder.setDataField<bool>(
       ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
+}
+
+inline float CarState::CruiseState::Reader::getSpeedCluster() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
+}
+
+inline float CarState::CruiseState::Builder::getSpeedCluster() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
+}
+inline void CarState::CruiseState::Builder::setSpeedCluster(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
+}
+
+inline float CarState::CruiseState::Reader::getSpeedLimit() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
+}
+
+inline float CarState::CruiseState::Builder::getSpeedLimit() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
+}
+inline void CarState::CruiseState::Builder::setSpeedLimit(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
 }
 
 inline bool CarState::CruiseState::Reader::getEnabledAcc() const {

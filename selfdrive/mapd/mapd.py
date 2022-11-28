@@ -24,8 +24,8 @@ _CLOUDLOG_DEBUG = True
 def _debug(msg, log_to_cloud=True):
   if _CLOUDLOG_DEBUG and log_to_cloud:
     cloudlog.debug(msg)
-  if _DEBUG:
-    print(msg)
+  #if _DEBUG:
+  print(msg)
 
 
 def excepthook(args):
@@ -201,15 +201,16 @@ class MapD():
 
   def publish(self, pm, sm):
     # Ensure we have a route currently located
-    if self.route is None or not self.route.located:
-      _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
-      return
+#    if self.route is None or not self.route.located:
+#      _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
+#      return
 
     # Ensure we have a route update since last publish
-    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
-      return
+#    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+#      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
+#      return
 
+    _debug(self.route.current_speed_limit)
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
     speed_limit = self.route.current_speed_limit

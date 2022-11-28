@@ -45,7 +45,7 @@ static struct service services[] = {
   { "modelV2", 8041, true, 20, 40 },
   { "managerState", 8042, true, 2, 1 },
   { "uploaderState", 8043, true, 0, 1 },
-  { "navInstruction", 8044, true, 0, 10 },
+  { "navInstruction", 8044, true, 1, 10 },
   { "navRoute", 8045, true, 0, -1 },
   { "navThumbnail", 8046, true, 0, -1 },
   { "roadLimitSpeed", 8047, false, 0, -1 },
@@ -53,6 +53,7 @@ static struct service services[] = {
   { "roadEncodeData", 8049, false, 20, -1 },
   { "driverEncodeData", 8050, false, 10, -1 },
   { "wideRoadEncodeData", 8051, false, 20, -1 },
+  { "liveMapData", 8052, true, 0, -1 },
 };
 #endif
 

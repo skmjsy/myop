@@ -266,6 +266,8 @@ struct GpsLocationData {
   # Represents velocity accuracy in m/s. (presumably 1 sigma?)
   speedAccuracy @12 :Float32;
 
+  unixTimestampMillis @13 :Int64;
+
   enum SensorSource {
     android @0;
     iOS @1;
@@ -994,6 +996,10 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   rProb @7 :Float32;
   dPathPoints @20 :List(Float32);
   dProb @21 :Float32;
+
+  #dp
+  dPathWLinesX @35 :List(Float32);
+  dPathWLinesY @36 :List(Float32);
 
   mpcSolutionValid @9 :Bool;
   desire @17 :Desire;
@@ -1864,6 +1870,9 @@ struct NavInstruction {
   lanes @8 :List(Lane);
   showFull @9 :Bool;
 
+  speedLimit @10 :Float32; # m/s
+  speedLimitSign @11 :SpeedLimitSign;
+
   struct Lane {
     directions @0 :List(Direction);
     active @1 :Bool;
@@ -1877,6 +1886,10 @@ struct NavInstruction {
     straight @3;
   }
 
+  enum SpeedLimitSign {
+    mutcd @0; # US Style
+    vienna @1; # EU Style
+  }
 }
 
 struct NavRoute {
