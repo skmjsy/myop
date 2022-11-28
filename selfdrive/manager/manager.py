@@ -113,7 +113,7 @@ def manager_init() -> None:
     ("OsmDbUpdatesCheck", "0"),
     ("OsmLocal", "0"),
     ("OsmLocalDb", "0"),
-    ("OsmWayTest", "30023440"),
+    ("OsmWayTest", "49216116"),
 
 
   ]

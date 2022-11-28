@@ -226,7 +226,6 @@ class MapD():
     self.log.add(speed_limit)
     self.log.add(current_road_name)
 
-
     map_data_msg = messaging.new_message('liveMapData')
     map_data_msg.valid = sm.all_alive(service_list=['gpsLocationExternal']) and \
                          sm.all_valid(service_list=['gpsLocationExternal'])

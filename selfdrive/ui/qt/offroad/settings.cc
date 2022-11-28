@@ -2223,17 +2223,23 @@ CommunityPanel::CommunityPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_speed_limit.png",
                                   this));
 
-  toggles.append(new ParamControl("SpeedLimitPercOffset",
-                                  "Enable Speed Limit Offset",
-                                  "Set speed limit slightly higher than actual speed limit for a more natural drive.",
-                                  "../assets/offroad/icon_speed_limit.png",
-                                  this));
+  // toggles.append(new ParamControl("SpeedLimitPercOffset",
+  //                                 "Enable Speed Limit Offset",
+  //                                 "Set speed limit slightly higher than actual speed limit for a more natural drive.",
+  //                                 "../assets/offroad/icon_speed_limit.png",
+  //                                 this));
 
   toggles.append(new ParamControl("TurnSpeedControl",
                                   "Enable Map Data Turn Control",
                                   "Use curvature info from map data to define speed limits to take turns ahead",
                                   "../assets/offroad/icon_openpilot.png",
-                                  this));                  
+                                  this));                
+
+  toggles.append(new ParamControl("OsmLocalDb",
+                                  "Enable Offline OSM",
+                                  "Local only OSM. This will download DBs from online.",
+                                  "../assets/offroad/icon_openpilot.png",
+                                  this));    
 
   // toggles.append(new ParamControl("StopAtStopSign",
   //                                 "Stop at Stop Light",
