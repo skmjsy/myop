@@ -303,7 +303,7 @@ class SpeedLimitController():
       self._is_enabled = self._params.get_bool("SpeedLimitControl")
       self._offset_enabled = self._params.get_bool("SpeedLimitPercOffset")
       _debug(f'Updated Speed limit params. enabled: {self._is_enabled}, with offset: {self._offset_enabled}')
-      self._log(f'Updated Speed limit params. enabled: {self._is_enabled}, with offset: {self._offset_enabled}')
+      self._log.add(f'Updated Speed limit params. enabled: {self._is_enabled}, with offset: {self._offset_enabled}')
       self._last_params_update = time
 
   def _update_calculations(self):
