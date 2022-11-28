@@ -3,10 +3,7 @@ from selfdrive.mapd.lib.geo import vectors, R
 from selfdrive.mapd.lib.NodesData import _MIN_NODE_DISTANCE, _ADDED_NODES_DIST, _SPLINE_EVAL_STEP, \
   _MIN_SPEED_SECTION_LENGTH, nodes_raw_data_array_for_wr, node_calculations, is_wr_a_valid_divertion_from_node, \
   spline_curvature_calculations, speed_limits_for_curvatures_data
-if EON:
-  from opspline import splev, splprep  # pylint: disable=E0401
-else:
-  from scipy.interpolate import splev, splprep
+from opspline import splev, splprep
 import numpy as np
 import overpy
 
