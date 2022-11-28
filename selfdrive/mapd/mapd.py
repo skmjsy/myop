@@ -109,11 +109,9 @@ class MapD():
   def _query_osm_not_blocking(self):
     def query(osm, location_deg, location_rad, radius):
       _debug(f'Mapd: Start query for OSM map data at {location_deg}')
-      self.log.add(f'Mapd: Start query for OSM map data at {location_deg}')
       lat, lon = location_deg
       areas, ways = osm.fetch_road_ways_around_location(lat, lon, radius)
       _debug(f'Mapd: Query to OSM finished with {len(ways)} ways')
-      self.log.add(f'Mapd: Query to OSM finished with {len(ways)} ways')
 
       # Only issue an update if we received some ways. Otherwise it is most likely a conectivity issue.
       # Will retry on next loop.
