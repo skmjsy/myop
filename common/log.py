@@ -1,7 +1,7 @@
 import datetime
 import common.CTime1000 as tm
 
-ROOT_LOG = '/data/log/'
+ROOT_LOG = '/data/loger/'
 
 
 global_alertTextMsg1 = 'T1'
