@@ -716,6 +716,11 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   const SubMaster &sm = *(s->sm);
   const auto scc_smoother = sm["carControl"].getCarControl().getSccSmoother();
   const auto road_limit_speed = sm["roadLimitSpeed"].getRoadLimitSpeed();
+  const auto lp = sm["longitudinalPlan"].getLongitudinalPlan();
+
+  // sunny
+  const float speed_limit = lp.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
+  const float tsc_speed = lp.getTurnSpeed() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   bool is_metric = s->scene.is_metric;
   bool long_control = scc_smoother.getLongControl();
@@ -725,13 +730,22 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   float cruiseMaxSpeed = scc_smoother.getCruiseMaxSpeed();
 
   bool is_cruise_set = (cruiseMaxSpeed > 0 && cruiseMaxSpeed < 255);
-
+  
+  // Korea
   int activeNDA = road_limit_speed.getActive();
   int roadLimitSpeed = road_limit_speed.getRoadLimitSpeed();
   int camLimitSpeed = road_limit_speed.getCamLimitSpeed();
   int camLimitSpeedLeftDist = road_limit_speed.getCamLimitSpeedLeftDist();
   int sectionLimitSpeed = road_limit_speed.getSectionLimitSpeed();
   int sectionLeftDist = road_limit_speed.getSectionLeftDist();
+
+  // US
+  activeNDA = int(lp.getSpeedLimitControlState()); 
+  roadLimitSpeed = int(speed_limit);
+  camLimitSpeedLeftDist = int(lp.getDistToTurn() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
+  camLimitSpeed = int(tsc_speed);
+  sectionLimitSpeed = int(speed_limit);
+  sectionLeftDist = int(lp.getDistToSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
 
   int limit_speed = 0;
   int left_dist = 0;
@@ -743,7 +757,7 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   else if(sectionLimitSpeed > 0 && sectionLeftDist > 0) {
     limit_speed = sectionLimitSpeed;
     left_dist = sectionLeftDist;
-  }
+  }  
 
   if(activeNDA > 0)
   {

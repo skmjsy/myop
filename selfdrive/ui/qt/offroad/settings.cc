@@ -2214,13 +2214,13 @@ CommunityPanel::CommunityPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("TurnVisionControl",
                                   "Enable vision based turn control",
                                   "Use vision path predictions to estimate the appropiate speed to drive through turns ahead.",
-                                  "../assets/offroad/icon_road.png",
+                                  "../assets/offroad/icon_speed_limit.png",
                                   this));                          
 
   toggles.append(new ParamControl("SpeedLimitControl",
                                   "Enable Speed Limit Control",
                                   "Use speed limit signs information from map data and car interface to automatically adapt cruise speed to road limits.",
-                                  "../assets/offroad/icon_speed_limit.png",
+                                  "../assets/offroad/icon_map_speed.png",
                                   this));
 
   // toggles.append(new ParamControl("SpeedLimitPercOffset",
@@ -2232,13 +2232,13 @@ CommunityPanel::CommunityPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("TurnSpeedControl",
                                   "Enable Map Data Turn Control",
                                   "Use curvature info from map data to define speed limits to take turns ahead",
-                                  "../assets/offroad/icon_openpilot.png",
+                                  "../assets/offroad/icon_map_speed.png",
                                   this));                
 
   toggles.append(new ParamControl("OsmLocalDb",
                                   "Enable Offline OSM",
                                   "Local only OSM. This will download DBs from online.",
-                                  "../assets/offroad/icon_openpilot.png",
+                                  "../assets/offroad/icon_map_speed.png",
                                   this));    
 
   // toggles.append(new ParamControl("StopAtStopSign",
