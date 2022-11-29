@@ -53,6 +53,7 @@ class OSM():
         cmd.append(f"--request={q}")
         completion = subprocess.run(cmd, check=True, capture_output=True)
         ways = self.api.parse_xml(completion.stdout).ways
+        self.log.add(cmd)
         if self.areas is None:
           # q =  """is_in""" + lat_lon + """;area._[admin_level~"[24]"];
           #     convert area ::id = id(), admin_level = t['admin_level'],
@@ -63,7 +64,6 @@ class OSM():
           except Exception:
             pass
         areas = self.areas
-        # self.log.add(cmd)
       else:
         # print("Query OSM from remote Server")
         # self.log.add("Query OSM from remote Server")
@@ -71,6 +71,7 @@ class OSM():
         areas, ways = query.areas, query.ways
     except Exception as e:
       # print(f'Exception while querying OSM:\n{e}')
+      self.log.add(f'Exception while querying OSM:\n{e}')
       areas, ways = [],[]
 
     return areas, ways
