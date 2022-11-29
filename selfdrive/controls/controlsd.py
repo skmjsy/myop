@@ -37,6 +37,9 @@ SOFT_DISABLE_TIME = 3  # seconds
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 
+MAX_HIGHWAY_SPEED = 65 * CV.MPH_TO_MS
+MAX_CITY_SPEED = 35 * CV.MPH_TO_MS
+
 REPLAY = "REPLAY" in os.environ
 SIMULATION = "SIMULATION" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
@@ -524,11 +527,10 @@ class Controls:
     #  else:
     #    self.v_cruise_kph = 0
 
-    slcState = self.sm['longitudinalPlan'].speedLimitControlState
     speed_limit = self.sm['longitudinalPlan'].speedLimit 
 
     #speedLimitControl
-    if slcState > 0 and int(speed_limit): # > int(MAX_CITY_SPEED):
+    if int(speed_limit) > int(MAX_CITY_SPEED):
       self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
       self.v_cruise_kph_last = self.v_cruise_kph
 
