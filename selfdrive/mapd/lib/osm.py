@@ -41,6 +41,7 @@ class OSM():
         """
     try:
       if self.osm_local_db_enabled:
+        self.log.add("Query OSM from Local Server")
         # print("Query OSM from Local Server")
         # q = """
         #     way(""" + bbox_str + """)
