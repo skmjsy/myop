@@ -217,11 +217,11 @@ class MapD():
       return
 
     # Ensure we have a route update since last publish
-    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
-      self.log.add('Mapd: Skipping liveMapData since there is no new gps fix.')
-      return
-    
+    #if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+    #  _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
+    #  self.log.add('Mapd: Skipping liveMapData since there is no new gps fix.')
+    #  return
+  
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
     speed_limit = self.route.current_speed_limit
