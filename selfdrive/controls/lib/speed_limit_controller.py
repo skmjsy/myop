@@ -22,7 +22,7 @@ _LIMIT_PERC_OFFSET_BP = [13.9, 27.8, 36.1]  # 50, 100, 130 km/h
 SpeedLimitControlState = log.LongitudinalPlan.SpeedLimitControlState
 EventName = car.CarEvent.EventName
 
-_DEBUG = False
+_DEBUG = True
 
 
 def _debug(msg):
