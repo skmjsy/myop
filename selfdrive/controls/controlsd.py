@@ -524,7 +524,13 @@ class Controls:
     #  else:
     #    self.v_cruise_kph = 0
 
-    SccSmoother.update_cruise_buttons(self, CS, self.CP.openpilotLongitudinalControl)
+    slcState = self.sm['longitudinalPlan'].speedLimitControlState
+    speed_limit = self.sm['longitudinalPlan'].speedLimit 
+
+    #speedLimitControl
+    if slcState > 0 and int(speed_limit): # > int(MAX_CITY_SPEED):
+      self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
+      self.v_cruise_kph_last = self.v_cruise_kph
 
     #visionTurnControl	
     vtcState = self.sm['longitudinalPlan'].visionTurnControllerState
@@ -535,6 +541,8 @@ class Controls:
     elif vtcState == 3:	
       self.events.add(EventName.visionleaving)	
     
+    SccSmoother.update_cruise_buttons(self, CS, self.CP.openpilotLongitudinalControl)
+
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
     self.soft_disable_timer = max(0, self.soft_disable_timer - 1)

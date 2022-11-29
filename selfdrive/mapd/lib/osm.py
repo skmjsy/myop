@@ -41,7 +41,7 @@ class OSM():
         """
     try:
       if self.osm_local_db_enabled:
-        self.log.add("Query OSM from Local Server")
+        # self.log.add("Query OSM from Local Server")
         # print("Query OSM from Local Server")
         # q = """
         #     way(""" + bbox_str + """)
@@ -63,10 +63,10 @@ class OSM():
           except Exception:
             pass
         areas = self.areas
-        self.log.add(cmd)
+        # self.log.add(cmd)
       else:
         # print("Query OSM from remote Server")
-        self.log.add("Query OSM from remote Server")
+        # self.log.add("Query OSM from remote Server")
         query = self.api.query(q + area_q)
         areas, ways = query.areas, query.ways
     except Exception as e:
