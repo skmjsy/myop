@@ -124,6 +124,7 @@ class MapD():
           self.way_collection = new_way_collection
           self.last_fetch_location = location_rad
           _debug(f'Mapd: Updated map data @ {location_deg} - got {len(ways)} ways')
+          self.log.add(f'Mapd: Updated map data @ {location_deg} - got {len(ways)} ways')
 
         _debug('Mapd: Releasing Lock to write results from osm', log_to_cloud=False)
 
@@ -160,13 +161,16 @@ class MapD():
       if self._disengaging:
         self.route = None
         _debug('Mapd *****: Clearing Route as system is disengaging. ********')
+        self.log.add('Mapd *****: Clearing Route as system is disengaging. ********')
 
       if self.way_collection is None or self.location_rad is None or self.bearing_rad is None:
         _debug('Mapd *****: Can not update route. Missing WayCollection, location or bearing ********')
+        self.log.add('Mapd *****: Can not update route. Missing WayCollection, location or bearing ********')
         return
 
       if self.route is not None and self.last_route_update_fix_timestamp == self.last_gps_fix_timestamp:
         _debug('Mapd *****: Skipping route update. No new fix since last update ********')
+        self.log.add('Mapd *****: Skipping route update. No new fix since last update ********')
         return
 
       self.last_route_update_fix_timestamp = self.last_gps_fix_timestamp
@@ -175,6 +179,7 @@ class MapD():
       if self.route is None or self.route.way_collection_id != self.way_collection.id:
         self.route = self.way_collection.get_route(self.location_rad, self.bearing_rad, self.location_stdev)
         _debug(f'Mapd *****: Route created: \n{self.route}\n********')
+        self.log.add(_debug(f'Mapd *****: Route created: \n{self.route}\n********'))
         return
 
       # Do not attempt to update the route if the car is going close to a full stop, as the bearing can start
@@ -182,16 +187,19 @@ class MapD():
       # a new liveMapData message will be published with the current values (which is desirable)
       if self.gps_speed < FULL_STOP_MAX_SPEED:
         _debug('Mapd *****: Route Not updated as car has Stopped ********')
+        self.log.add('Mapd *****: Route Not updated as car has Stopped ********')
         return
 
       self.route.update(self.location_rad, self.bearing_rad, self.location_stdev)
       if self.route.located:
         _debug(f'Mapd *****: Route updated: \n{self.route}\n********')
+        self.log.ad(f'Mapd *****: Route updated: \n{self.route}\n********')
         return
 
       # if an old route did not mange to locate, attempt to regenerate form way collection.
       self.route = self.way_collection.get_route(self.location_rad, self.bearing_rad, self.location_stdev)
       _debug(f'Mapd *****: Failed to update location in route. Regenerated with route: \n{self.route}\n********')
+      self.log.add(f'Mapd *****: Failed to update location in route. Regenerated with route: \n{self.route}\n********')
 
     # We use the lock when updating the route, as it reads `way_collection` which can ben updated by
     # a new query result from the _query_thread.
@@ -205,11 +213,13 @@ class MapD():
     # Ensure we have a route currently located
     if self.route is None or not self.route.located:
       _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
+      self.log.add('Mapd: Skipping liveMapData message as there is no route or is not located.')
       return
 
     # Ensure we have a route update since last publish
     if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
       _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
+      self.log.add('Mapd: Skipping liveMapData since there is no new gps fix.')
       return
     
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp

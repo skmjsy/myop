@@ -18,7 +18,8 @@ class OSM():
   def __init__(self):
     self.api = overpy.Overpass()
     self.areas = None
-    self.osm_local_db_enabled = is_local_osm_installed() and Params().get_bool("OsmLocalDb")
+    #self.osm_local_db_enabled = is_local_osm_installed() and Params().get_bool("OsmLocalDb")
+    self.osm_local_db_enabled = Params().get_bool("OsmLocalDb")
     # self.api = overpy.Overpass(url='http://3.65.170.21/api/interpreter')
     self.log = Loger()
 
@@ -64,6 +65,7 @@ class OSM():
         self.log.add(cmd)
       else:
         # print("Query OSM from remote Server")
+        self.log.add("Query OSM from remote Server")
         query = self.api.query(q + area_q)
         areas, ways = query.areas, query.ways
     except Exception as e:
