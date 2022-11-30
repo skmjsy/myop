@@ -525,14 +525,14 @@ class Controls:
     #  if CS.cruiseState.available:
     #    self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
     #  else:
-    #    self.v_cruise_kph = 0
-
-    speed_limit = self.sm['longitudinalPlan'].speedLimit 
+    #    self.v_cruise_kph = 0    
 
     #speedLimitControl
-    # if int(speed_limit) > int(MAX_CITY_SPEED):
-    #   self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
-    #   self.v_cruise_kph_last = self.v_cruise_kph
+    slcState = self.sm['longitudinalPlan'].speedLimitControlState
+    speed_limit = self.sm['longitudinalPlan'].speedLimit 
+    if slcState > 0 and int(speed_limit) > int(MAX_CITY_SPEED):
+      self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
+      self.v_cruise_kph_last = self.v_cruise_kph
 
     #visionTurnControl	
     vtcState = self.sm['longitudinalPlan'].visionTurnControllerState

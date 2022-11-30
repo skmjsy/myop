@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import threading
 from traceback import print_exception
-from common.log import Loger
 import numpy as np
 from time import strftime, gmtime
 import cereal.messaging as messaging
@@ -48,7 +47,6 @@ class MapD():
     self._disengaging = False
     self._query_thread = None
     self._lock = threading.RLock()
-    self.log = Loger()
 
   def udpate_state(self, sm):
     sock = 'controlsState'
@@ -182,13 +180,11 @@ class MapD():
   def publish(self, pm, sm):
     # Ensure we have a route currently located
     if self.route is None or not self.route.located:
-      self.log.add('Mapd *****: Ensure we have a route currently located')
       return
 
     # Ensure we have a route update since last publish
     if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-      self.log.add('Mapd *****: Ensure we have a route update since last publish')
-      # return
+      return
 
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
@@ -200,9 +196,7 @@ class MapD():
     current_road_name = self.route.current_road_name
 
     map_data_msg = messaging.new_message('liveMapData')
-    # map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
-    map_data_msg.valid = sm.all_alive(service_list=['gpsLocationExternal']) and \
-                         sm.all_valid(service_list=['gpsLocationExternal'])
+    map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
 
     map_data_msg.liveMapData.lastGpsTimestamp = self.last_gps.timestamp
     map_data_msg.liveMapData.lastGpsLatitude = float(self.last_gps.latitude)
@@ -235,7 +229,7 @@ class MapD():
 
     pm.send('liveMapData', map_data_msg)
     _debug(f'Mapd *****: Publish: \n{map_data_msg}\n********')
-    self.log.add(f'Mapd *****: Publish: \n{map_data_msg}\n********')
+
 
 # provides live map data information
 def mapd_thread(sm=None, pm=None):

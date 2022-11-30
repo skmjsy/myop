@@ -3,6 +3,7 @@ import subprocess
 import numpy as np
 from common.params import Params
 from selfdrive.mapd.lib.geo import R
+from common.log import Loger
 
 OSM_LOCAL_PATH = "/data/media/0/osm"
 OSM_VERSION = "0.7.56"
@@ -21,6 +22,7 @@ class OSM():
     self.api = overpy.Overpass()
     self.osm_local_db_enabled = Params().get_bool("OsmLocalDb")
     # self.api = overpy.Overpass(url='http://3.65.170.21/api/interpreter')
+    self.log = Loger()
 
   def fetch_road_ways_around_location(self, lat, lon, radius):
     # Calculate the bounding box coordinates for the bbox containing the circle around location.
@@ -48,11 +50,14 @@ class OSM():
         cmd.append(f"--request={q}")
         completion = subprocess.run(cmd, check=True, capture_output=True)
         ways = self.api.parse_xml(completion.stdout).ways
+        self.log.add(completion.stdout)
+        # self.log.add(ways)
       else:  
         ways = self.api.query(q).ways
 
     except Exception as e:
       print(f'Exception while querying OSM:\n{e}')
+      self.log.add(f'Exception while querying OSM:\n{e}')
       ways = []
 
     return ways
