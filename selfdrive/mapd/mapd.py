@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import threading
 from traceback import print_exception
+from common.log import Loger
 import numpy as np
 from time import strftime, gmtime
 import cereal.messaging as messaging
@@ -47,6 +48,7 @@ class MapD():
     self._disengaging = False
     self._query_thread = None
     self._lock = threading.RLock()
+    self.log = Loger()
 
   def udpate_state(self, sm):
     sock = 'controlsState'
@@ -229,7 +231,7 @@ class MapD():
 
     pm.send('liveMapData', map_data_msg)
     _debug(f'Mapd *****: Publish: \n{map_data_msg}\n********')
-
+    self.log.add(f'Mapd *****: Publish: \n{map_data_msg}\n********')
 
 # provides live map data information
 def mapd_thread(sm=None, pm=None):
