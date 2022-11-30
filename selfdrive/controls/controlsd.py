@@ -514,7 +514,7 @@ class Controls:
   def state_transition(self, CS):
     """Compute conditional state transitions and execute actions on state transitions"""
 
-    # self.v_cruise_kph_last = self.v_cruise_kph
+    self.v_cruise_kph_last = self.v_cruise_kph
 
     self.CP.pcmCruise = self.CI.CP.pcmCruise
 
@@ -530,9 +530,9 @@ class Controls:
     speed_limit = self.sm['longitudinalPlan'].speedLimit 
 
     #speedLimitControl
-    if int(speed_limit) > int(MAX_CITY_SPEED):
-      self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
-      self.v_cruise_kph_last = self.v_cruise_kph
+    # if int(speed_limit) > int(MAX_CITY_SPEED):
+    #   self.v_cruise_kph = speed_limit * CV.MS_TO_KPH    
+    #   self.v_cruise_kph_last = self.v_cruise_kph
 
     #visionTurnControl	
     vtcState = self.sm['longitudinalPlan'].visionTurnControllerState

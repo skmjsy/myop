@@ -199,7 +199,8 @@ class MapD():
 
     map_data_msg = messaging.new_message('liveMapData')
     # map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
-    map_data_msg.valid = True
+    map_data_msg.valid = sm.all_alive(service_list=['gpsLocationExternal']) and \
+                         sm.all_valid(service_list=['gpsLocationExternal'])
 
     map_data_msg.liveMapData.lastGpsTimestamp = self.last_gps.timestamp
     map_data_msg.liveMapData.lastGpsLatitude = float(self.last_gps.latitude)
