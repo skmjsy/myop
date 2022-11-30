@@ -720,7 +720,7 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
 
   // sunny
   const float speed_limit = lp.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
-  const float tsc_speed = lp.getTurnSpeed() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
+  // const float tsc_speed = lp.getTurnSpeed() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   bool is_metric = s->scene.is_metric;
   bool long_control = scc_smoother.getLongControl();
