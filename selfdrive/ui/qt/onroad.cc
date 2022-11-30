@@ -742,10 +742,10 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   // US
   activeNDA = int(lp.getSpeedLimitControlState()); 
   roadLimitSpeed = int(speed_limit);
-  camLimitSpeedLeftDist = int(lp.getDistToTurn() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
-  camLimitSpeed = int(tsc_speed);
-  sectionLimitSpeed = int(speed_limit);
-  sectionLeftDist = int(lp.getDistToSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
+  // camLimitSpeedLeftDist = int(lp.getDistToTurn() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
+  // camLimitSpeed = int(tsc_speed);
+  // sectionLimitSpeed = int(speed_limit);
+  // sectionLeftDist = int(lp.getDistToSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
 
   int limit_speed = 0;
   int left_dist = 0;

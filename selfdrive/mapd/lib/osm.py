@@ -27,14 +27,21 @@ class OSM():
     # Calculate the bounding box coordinates for the bbox containing the circle around location.
     bbox_angle = np.degrees(radius / R)
     # fetch all ways and nodes on this ways in bbox
-    bbox_str = f'{str(lat - bbox_angle)},{str(lon - bbox_angle)},{str(lat + bbox_angle)},{str(lon + bbox_angle)}'
+    # bbox_str = f'{str(lat - bbox_angle)},{str(lon - bbox_angle)},{str(lat + bbox_angle)},{str(lon + bbox_angle)}'
+    bbox_str = f'around:25,{str(lat)},{str(lon)}'
     lat_lon = "(%f,%f)" % (lat, lon)
+    # q = """
+    #     way(""" + bbox_str + """)
+    #       [highway]
+    #       [highway!~"^(footway|path|corridor|bridleway|steps|cycleway|construction|bus_guideway|escape|service|track)$"];
+    #     (._;>;);
+    #     out;"""
     q = """
         way(""" + bbox_str + """)
-          [highway]
-          [highway!~"^(footway|path|corridor|bridleway|steps|cycleway|construction|bus_guideway|escape|service|track)$"];
+          ["maxspeed"];
         (._;>;);
         out;"""
+
     area_q = """is_in""" + lat_lon + """;area._[admin_level~"[24]"];
         convert area ::id = id(), admin_level = t['admin_level'],
         name = t['name'], "ISO3166-1:alpha2" = t['ISO3166-1:alpha2'];out;
