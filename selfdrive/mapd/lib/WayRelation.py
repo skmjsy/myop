@@ -1,6 +1,6 @@
 from selfdrive.mapd.lib.geo import DIRECTION, R, vectors, bearing_to_points, distance_to_points
 from selfdrive.mapd.lib.osm import create_way
-from common.conversions import Conversions as CV
+from selfdrive.config import Conversions as CV
 from selfdrive.mapd.config import LANE_WIDTH
 from common.basedir import BASEDIR
 from datetime import datetime as dt
@@ -11,8 +11,6 @@ import json
 
 _WAY_BBOX_PADING = 80. / R  # 80 mts of pading to bounding box. (expressed in radians)
 
-with open(BASEDIR + "/selfdrive/mapd/lib/default_speeds_by_region.json", "rb") as f:
-  DEFAULT_SPEEDS_BY_REGION = json.loads(f.read())
 
 with open(BASEDIR + "/selfdrive/mapd/lib/default_speeds.json", "rb") as f:
   _COUNTRY_LIMITS = json.loads(f.read())
@@ -42,7 +40,7 @@ _HIGHWAY_RANK = {
   'unclassified': 50,
   'residential': 60,
   'living_street': 61,
-  'service': 62
+  None: 100,
 }
 
 
@@ -143,56 +141,12 @@ def conditional_speed_limit_for_osm_tag_limit_string(limit_string):
   # If we get here, no current date-time conditon is active.
   return 0.
 
-def speed_limit_value_for_highway_type(areas, tags):
-  max_speed = None
-  try:
-    for area in areas:
-      if area.tags.get('admin_level', '') == "2":
-        if area.tags.get('ISO3166-1:alpha2', '') != '':
-          geocode_country = area.tags.get('ISO3166-1:alpha2', '')
-      elif area.tags.get('admin_level', '') == "4":
-        geocode_region = area.tags.get('name', '')
-    country_rules = DEFAULT_SPEEDS_BY_REGION.get(geocode_country, {})
-    country_defaults = country_rules.get('Default', [])
-    for rule in country_defaults:
-      rule_valid = all(
-        tag_name in tags
-        and tags[tag_name] == value
-        for tag_name, value in rule['tags'].items()
-      )
-      if rule_valid:
-        max_speed = rule['speed']
-        break #stop searching country
-
-    region_rules = country_rules.get(geocode_region, [])
-    for rule in region_rules:
-      rule_valid = all(
-        tag_name in tags
-        and tags[tag_name] == value
-        for tag_name, value in rule['tags'].items()
-      )
-      if rule_valid:
-        max_speed = rule['speed']
-        break #stop searching region
-  except KeyError as e:
-    print(e)
-  except TypeError as e:
-    print(f"TypeError: {e} object is not iterable.")
-  if max_speed is None:
-    return 0
-  v = re.match(r'^\s*([0-9]{1,3})\s*?(mph)?\s*$', str(max_speed))
-  if v is None:
-    return None
-  conv = CV.MPH_TO_MS if v[2] is not None and v[2] == "mph" else CV.KPH_TO_MS
-  return conv * float(v[1])
-
 
 class WayRelation():
   """A class that represent the relationship of an OSM way and a given `location` and `bearing` of a driving vehicle.
   """
-  def __init__(self, areas, way, parent=None):
+  def __init__(self, way, parent=None):
     self.way = way
-    self.areas = areas
     self.parent = parent
     self.parent_wr_id = parent.id if parent is not None else None  # For WRs created as splits of other WRs
     self.reset_location_variables()
@@ -202,7 +156,7 @@ class WayRelation():
     self.name = way.tags.get('name')
     self.ref = way.tags.get('ref')
     self.highway_type = way.tags.get("highway")
-    self.highway_rank = _HIGHWAY_RANK.get(self.highway_type, 1000)
+    self.highway_rank = _HIGHWAY_RANK.get(self.highway_type)
     try:
       self.lanes = int(way.tags.get('lanes'))
     except Exception:
@@ -234,7 +188,7 @@ class WayRelation():
 
   def __eq__(self, other):
     if isinstance(other, WayRelation):
-      return self.id == other.id
+        return self.id == other.id
     return False
 
   def reset_location_variables(self):
@@ -388,9 +342,6 @@ class WayRelation():
 
       limit = speed_limit_for_osm_tag_limit_string(limit_string)
 
-    if limit == 0.:
-      limit = speed_limit_value_for_highway_type(self.areas, self.way.tags)
-
     self._speed_limit = limit
     return self._speed_limit
 
@@ -469,4 +420,4 @@ class WayRelation():
 
     ways = [create_way(way_ids[0], node_ids=self._nodes_ids[:idx + 1], from_way=self.way),
             create_way(way_ids[1], node_ids=self._nodes_ids[idx:], from_way=self.way)]
-    return [WayRelation(self.areas, way, parent=self) for way in ways]
+    return [WayRelation(way, parent=self) for way in ways]

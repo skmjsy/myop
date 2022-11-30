@@ -3,7 +3,6 @@ import time
 from common.numpy_fast import interp
 from enum import IntEnum
 from cereal import log, car
-from common.log import Loger
 from common.params import Params
 from common.realtime import sec_since_boot
 from selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_ACC, LIMIT_MAX_ACC, LIMIT_SPEED_OFFSET_TH, \
@@ -22,7 +21,7 @@ _LIMIT_PERC_OFFSET_BP = [13.9, 27.8, 36.1]  # 50, 100, 130 km/h
 SpeedLimitControlState = log.LongitudinalPlan.SpeedLimitControlState
 EventName = car.CarEvent.EventName
 
-_DEBUG = True
+_DEBUG = False
 
 
 def _debug(msg):
@@ -65,7 +64,6 @@ class SpeedLimitResolver():
     self.speed_limit = 0.
     self.distance = 0.
     self.source = SpeedLimitResolver.Source.none
-    self.log = Loger()
 
   def resolve(self, v_ego, current_speed_limit, sm):
     self._v_ego = v_ego
@@ -89,7 +87,6 @@ class SpeedLimitResolver():
       self._limit_solutions[SpeedLimitResolver.Source.map_data] = 0.
       self._distance_solutions[SpeedLimitResolver.Source.map_data] = 0.
       _debug('SL: No map data for speed limit')
-      self.log.add('SL: No map data for speed limit')
       return
 
     # Load limits from map_data
@@ -103,7 +100,6 @@ class SpeedLimitResolver():
     #   self._limit_solutions[SpeedLimitResolver.Source.map_data] = 0.
     #   self._distance_solutions[SpeedLimitResolver.Source.map_data] = 0.
     #   _debug(f'SL: Ignoring map data as is too old. Age: {gps_fix_age}')
-    #   self.log.add(f'SL: Ignoring map data as is too old. Age: {gps_fix_age}')
     #   return
 
     # When we have no ahead speed limit to consider or it is greater than current speed limit
@@ -191,7 +187,6 @@ class SpeedLimitResolver():
       self.source = SpeedLimitResolver.Source.none
 
     _debug(f'SL: *** Speed Limit set: {self.speed_limit}, distance: {self.distance}, source: {self.source}')
-    self.log.add(f'SL: *** Speed Limit set: {self.speed_limit}, distance: {self.distance}, source: {self.source}')
 
 
 class SpeedLimitController():

@@ -2,9 +2,11 @@ import overpy
 import subprocess
 import numpy as np
 from common.params import Params
-from common.log import Loger
 from selfdrive.mapd.lib.geo import R
-from selfdrive.mapd.lib.helpers import is_local_osm_installed, OSM_QUERY
+
+OSM_LOCAL_PATH = "/data/media/0/osm"
+OSM_VERSION = "0.7.56"
+OSM_QUERY = [f"{OSM_LOCAL_PATH}/v{OSM_VERSION}/bin/osm3s_query", f"--db-dir={OSM_LOCAL_PATH}/db"]
 
 def create_way(way_id, node_ids, from_way):
   """
@@ -17,11 +19,8 @@ def create_way(way_id, node_ids, from_way):
 class OSM():
   def __init__(self):
     self.api = overpy.Overpass()
-    self.areas = None
-    #self.osm_local_db_enabled = is_local_osm_installed() and Params().get_bool("OsmLocalDb")
     self.osm_local_db_enabled = Params().get_bool("OsmLocalDb")
     # self.api = overpy.Overpass(url='http://3.65.170.21/api/interpreter')
-    self.log = Loger()
 
   def fetch_road_ways_around_location(self, lat, lon, radius):
     # Calculate the bounding box coordinates for the bbox containing the circle around location.
@@ -29,56 +28,31 @@ class OSM():
     # fetch all ways and nodes on this ways in bbox
     # bbox_str = f'{str(lat - bbox_angle)},{str(lon - bbox_angle)},{str(lat + bbox_angle)},{str(lon + bbox_angle)}'
     bbox_str = f'around:25,{str(lat)},{str(lon)}'
-    lat_lon = "(%f,%f)" % (lat, lon)
     # q = """
     #     way(""" + bbox_str + """)
     #       [highway]
     #       [highway!~"^(footway|path|corridor|bridleway|steps|cycleway|construction|bus_guideway|escape|service|track)$"];
     #     (._;>;);
-    #     out;"""
+    #     out;
+    #     """
+    
     q = """
         way(""" + bbox_str + """)
           ["maxspeed"];
         (._;>;);
         out;"""
 
-    area_q = """is_in""" + lat_lon + """;area._[admin_level~"[24]"];
-        convert area ::id = id(), admin_level = t['admin_level'],
-        name = t['name'], "ISO3166-1:alpha2" = t['ISO3166-1:alpha2'];out;
-        """
     try:
       if self.osm_local_db_enabled:
-        # self.log.add("Query OSM from Local Server")
-        # print("Query OSM from Local Server")
-        # q = """
-        #     way(""" + bbox_str + """)
-        #       [highway]
-        #       [highway!~"^(footway|path|corridor|bridleway|steps|cycleway|construction|bus_guideway|escape|service|track)$"];
-        #     (._;>;);
-        #     out;"""
         cmd = OSM_QUERY
         cmd.append(f"--request={q}")
         completion = subprocess.run(cmd, check=True, capture_output=True)
         ways = self.api.parse_xml(completion.stdout).ways
-        self.log.add(cmd)
-        if self.areas is None:
-          # q =  """is_in""" + lat_lon + """;area._[admin_level~"[24]"];
-          #     convert area ::id = id(), admin_level = t['admin_level'],
-          #     name = t['name'], "ISO3166-1:alpha2" = t['ISO3166-1:alpha2'];out;
-          #     """
-          try:
-            self.areas = self.api.query(area_q).areas
-          except Exception:
-            pass
-        areas = self.areas
-      else:
-        # print("Query OSM from remote Server")
-        # self.log.add("Query OSM from remote Server")
-        query = self.api.query(q + area_q)
-        areas, ways = query.areas, query.ways
-    except Exception as e:
-      # print(f'Exception while querying OSM:\n{e}')
-      self.log.add(f'Exception while querying OSM:\n{e}')
-      areas, ways = [],[]
+      else:  
+        ways = self.api.query(q).ways
 
-    return areas, ways
+    except Exception as e:
+      print(f'Exception while querying OSM:\n{e}')
+      ways = []
+
+    return ways
