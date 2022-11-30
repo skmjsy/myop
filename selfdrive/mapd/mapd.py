@@ -182,11 +182,13 @@ class MapD():
   def publish(self, pm, sm):
     # Ensure we have a route currently located
     if self.route is None or not self.route.located:
+      self.log.add('Mapd *****: Ensure we have a route currently located')
       return
 
     # Ensure we have a route update since last publish
-    # if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-    #   return
+    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+      self.log.add('Mapd *****: Ensure we have a route update since last publish')
+      # return
 
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 

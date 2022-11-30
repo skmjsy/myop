@@ -26,8 +26,8 @@ class OSM():
     # Calculate the bounding box coordinates for the bbox containing the circle around location.
     bbox_angle = np.degrees(radius / R)
     # fetch all ways and nodes on this ways in bbox
-    # bbox_str = f'{str(lat - bbox_angle)},{str(lon - bbox_angle)},{str(lat + bbox_angle)},{str(lon + bbox_angle)}'
-    bbox_str = f'around:25,{str(lat)},{str(lon)}'
+    bbox_str = f'{str(lat - bbox_angle)},{str(lon - bbox_angle)},{str(lat + bbox_angle)},{str(lon + bbox_angle)}'
+    # bbox_str = f'around:25,{str(lat)},{str(lon)}'
     # q = """
     #     way(""" + bbox_str + """)
     #       [highway]
@@ -35,7 +35,7 @@ class OSM():
     #     (._;>;);
     #     out;
     #     """
-    
+
     q = """
         way(""" + bbox_str + """)
           ["maxspeed"];
