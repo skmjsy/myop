@@ -247,6 +247,13 @@ class SubMaster:
            and self.all_freq_ok(service_list=service_list) \
            and self.all_valid(service_list=service_list)
 
+  def all_alive_and_valid(self, service_list=None) -> bool:
+    if service_list is None:  # check all
+      service_list = self.alive.keys()
+    return self.all_alive(service_list=service_list) and self.all_valid(service_list=service_list)
+
+    
+
 class PubMaster:
   def __init__(self, services: List[str]):
     self.sock = {}
