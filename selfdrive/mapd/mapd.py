@@ -183,8 +183,8 @@ class MapD():
       return
 
     # Ensure we have a route update since last publish
-    if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
-      return
+    # if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+    #   return
 
     self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
