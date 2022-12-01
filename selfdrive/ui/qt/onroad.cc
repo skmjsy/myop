@@ -720,7 +720,7 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   const auto lmd = sm["liveMapData"].getLiveMapData();
 
   // sunny
-  // const float speed_limit = lp.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
+  const float speed_limit = lmd.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
   // const float tsc_speed = lp.getTurnSpeed() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   bool is_metric = s->scene.is_metric;
@@ -741,8 +741,8 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   int sectionLeftDist = road_limit_speed.getSectionLeftDist();
 
   // US
-  activeNDA = int(lmd.getSpeedLimit());
-  roadLimitSpeed = int(lmd.getSpeedLimit());
+  activeNDA = int(speed_limit);
+  roadLimitSpeed = int(speed_limit);
   //lmd.getCurrentRoadName()
   // camLimitSpeedLeftDist = int(lp.getDistToTurn() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH) / 10.0) * 10;
   // camLimitSpeed = int(tsc_speed);
