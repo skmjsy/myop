@@ -716,11 +716,11 @@ void NvgWindow::drawMaxSpeed(QPainter &p) {
   const SubMaster &sm = *(s->sm);
   const auto scc_smoother = sm["carControl"].getCarControl().getSccSmoother();
   const auto road_limit_speed = sm["roadLimitSpeed"].getRoadLimitSpeed();
-  const auto lp = sm["longitudinalPlan"].getLongitudinalPlan();
+  // const auto lp = sm["longitudinalPlan"].getLongitudinalPlan();
   const auto lmd = sm["liveMapData"].getLiveMapData();
 
   // sunny
-  const float speed_limit = lp.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
+  // const float speed_limit = lp.getSpeedLimit() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
   // const float tsc_speed = lp.getTurnSpeed() * (s->scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   bool is_metric = s->scene.is_metric;
