@@ -50,14 +50,11 @@ class OSM():
         cmd.append(f"--request={q}")
         completion = subprocess.run(cmd, check=True, capture_output=True)
         ways = self.api.parse_xml(completion.stdout).ways
-        self.log.add(completion.stdout)
-        # self.log.add(ways)
       else:  
         ways = self.api.query(q).ways
 
     except Exception as e:
       print(f'Exception while querying OSM:\n{e}')
-      self.log.add(f'Exception while querying OSM:\n{e}')
       ways = []
 
     return ways

@@ -379,8 +379,8 @@ class Controls:
 
       if not self.sm.all_alive():
         self.events.add(EventName.commIssue)
-      elif not self.sm.all_freq_ok():
-        self.events.add(EventName.commIssueAvgFreq)
+      # elif not self.sm.all_freq_ok():
+      #   self.events.add(EventName.commIssueAvgFreq)
       else: # invalid or can_rcv_error.
         self.events.add(EventName.commIssue)
 
