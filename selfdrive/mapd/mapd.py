@@ -123,8 +123,9 @@ class MapD():
     #     _debug('do not query as long as we have a route with enough distance ahead.')
     #     return
 
-    # if self.location_rad is None:
-    #   return
+    if self.location_rad is None:
+      _debug('location_rad is None.')
+      return
 
     # if self.last_fetch_location is not None:
     #   distance_since_last = distance_to_points(self.last_fetch_location, np.array([self.location_rad]))[0]
