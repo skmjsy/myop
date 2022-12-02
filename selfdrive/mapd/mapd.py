@@ -17,7 +17,10 @@ _DEBUG = True
 def _debug(msg):
   if not _DEBUG:
     return
-  Loger.add(msg)
+  try:
+    Loger().add(msg)
+  except:
+    print("")
   print(msg)
 
 
