@@ -116,23 +116,23 @@ class MapD():
     self._query_thread.start()
 
   def updated_osm_data(self):
-    # if self.route is not None:
-    #   distance_to_end = self.route.distance_to_end
-    #   if distance_to_end is not None and distance_to_end >= MIN_DISTANCE_FOR_NEW_QUERY:
-    #     # do not query as long as we have a route with enough distance ahead.
-    #     _debug('do not query as long as we have a route with enough distance ahead.')
-    #     return
+    if self.route is not None:
+      distance_to_end = self.route.distance_to_end
+      if distance_to_end is not None and distance_to_end >= MIN_DISTANCE_FOR_NEW_QUERY:
+        # do not query as long as we have a route with enough distance ahead.
+        _debug('do not query as long as we have a route with enough distance ahead.')
+        return
 
     if self.location_rad is None:
-      _debug('location_rad is None.')
+      _debug('do not query as long as we have a route with enough distance ahead.')
       return
 
-    # if self.last_fetch_location is not None:
-    #   distance_since_last = distance_to_points(self.last_fetch_location, np.array([self.location_rad]))[0]
-    #   if distance_since_last < QUERY_RADIUS - MIN_DISTANCE_FOR_NEW_QUERY:
-    #     # do not query if are still not close to the border of previous query area
-    #     _debug('do not query if are still not close to the border of previous query area')
-    #     return
+    if self.last_fetch_location is not None:
+      distance_since_last = distance_to_points(self.last_fetch_location, np.array([self.location_rad]))[0]
+      if distance_since_last < QUERY_RADIUS - MIN_DISTANCE_FOR_NEW_QUERY:
+        # do not query if are still not close to the border of previous query area
+        _debug('do not query if are still not close to the border of previous query area')
+        return
 
     self._query_osm_not_blocking()
 
@@ -203,8 +203,7 @@ class MapD():
     current_road_name = self.route.current_road_name
 
     map_data_msg = messaging.new_message('liveMapData')
-    #map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
-    map_data_msg.valid = True
+    map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
 
     map_data_msg.liveMapData.lastGpsTimestamp = self.last_gps.timestamp
     map_data_msg.liveMapData.lastGpsLatitude = float(self.last_gps.latitude)
