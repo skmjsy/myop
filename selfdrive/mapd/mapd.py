@@ -9,14 +9,15 @@ from selfdrive.mapd.lib.osm import OSM
 from selfdrive.mapd.lib.geo import distance_to_points
 from selfdrive.mapd.lib.WayCollection import WayCollection
 from selfdrive.mapd.config import QUERY_RADIUS, MIN_DISTANCE_FOR_NEW_QUERY, FULL_STOP_MAX_SPEED, LOOK_AHEAD_HORIZON_TIME
+from common.log import Loger
 
-
-_DEBUG = False
+_DEBUG = True
 
 
 def _debug(msg):
   if not _DEBUG:
     return
+  Loger.add(msg)
   print(msg)
 
 
@@ -47,7 +48,7 @@ class MapD():
     self._disengaging = False
     self._query_thread = None
     self._lock = threading.RLock()
-
+    
   def udpate_state(self, sm):
     sock = 'controlsState'
     if not sm.updated[sock] or not sm.valid[sock]:
@@ -112,20 +113,22 @@ class MapD():
     self._query_thread.start()
 
   def updated_osm_data(self):
-    if self.route is not None:
-      distance_to_end = self.route.distance_to_end
-      if distance_to_end is not None and distance_to_end >= MIN_DISTANCE_FOR_NEW_QUERY:
-        # do not query as long as we have a route with enough distance ahead.
-        return
+    # if self.route is not None:
+    #   distance_to_end = self.route.distance_to_end
+    #   if distance_to_end is not None and distance_to_end >= MIN_DISTANCE_FOR_NEW_QUERY:
+    #     # do not query as long as we have a route with enough distance ahead.
+    #     _debug('do not query as long as we have a route with enough distance ahead.')
+    #     return
 
-    if self.location_rad is None:
-      return
+    # if self.location_rad is None:
+    #   return
 
-    if self.last_fetch_location is not None:
-      distance_since_last = distance_to_points(self.last_fetch_location, np.array([self.location_rad]))[0]
-      if distance_since_last < QUERY_RADIUS - MIN_DISTANCE_FOR_NEW_QUERY:
-        # do not query if are still not close to the border of previous query area
-        return
+    # if self.last_fetch_location is not None:
+    #   distance_since_last = distance_to_points(self.last_fetch_location, np.array([self.location_rad]))[0]
+    #   if distance_since_last < QUERY_RADIUS - MIN_DISTANCE_FOR_NEW_QUERY:
+    #     # do not query if are still not close to the border of previous query area
+    #     _debug('do not query if are still not close to the border of previous query area')
+    #     return
 
     self._query_osm_not_blocking()
 
@@ -180,13 +183,13 @@ class MapD():
   def publish(self, pm, sm):
     # Ensure we have a route currently located
     if self.route is None or not self.route.located:
+      _debug('Mapd: Skipping liveMapData message as there is no route or is not located.')
       return
 
     # Ensure we have a route update since last publish
     if self.last_publish_fix_timestamp == self.last_route_update_fix_timestamp:
+      _debug('Mapd: Skipping liveMapData since there is no new gps fix.')
       return
-
-    self.last_publish_fix_timestamp = self.last_route_update_fix_timestamp
 
     speed_limit = self.route.current_speed_limit
     next_speed_limit_section = self.route.next_speed_limit_section

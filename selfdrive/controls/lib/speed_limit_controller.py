@@ -96,11 +96,11 @@ class SpeedLimitResolver():
 
     # Calculate the age of the gps fix. Ignore if too old.
     gps_fix_age = time.time() - map_data.lastGpsTimestamp * 1e-3
-    # if gps_fix_age > LIMIT_MAX_MAP_DATA_AGE:
-    #   self._limit_solutions[SpeedLimitResolver.Source.map_data] = 0.
-    #   self._distance_solutions[SpeedLimitResolver.Source.map_data] = 0.
-    #   _debug(f'SL: Ignoring map data as is too old. Age: {gps_fix_age}')
-    #   return
+    if gps_fix_age > LIMIT_MAX_MAP_DATA_AGE:
+      self._limit_solutions[SpeedLimitResolver.Source.map_data] = 0.
+      self._distance_solutions[SpeedLimitResolver.Source.map_data] = 0.
+      _debug(f'SL: Ignoring map data as is too old. Age: {gps_fix_age}')
+      return
 
     # When we have no ahead speed limit to consider or it is greater than current speed limit
     # or car has stopped, then provide current value and reset tracking.

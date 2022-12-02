@@ -110,9 +110,9 @@ class TurnSpeedController():
 
     # Calculate the age of the gps fix. Ignore if too old.
     gps_fix_age = time.time() - map_data.lastGpsTimestamp * 1e-3
-    # if gps_fix_age > LIMIT_MAX_MAP_DATA_AGE:
-    #   _debug(f'TS: Ignoring map data as is too old. Age: {gps_fix_age}')
-    #   return 0., 0., 0
+    if gps_fix_age > LIMIT_MAX_MAP_DATA_AGE:
+      _debug(f'TS: Ignoring map data as is too old. Age: {gps_fix_age}')
+      return 0., 0., 0
 
     # Load turn ahead sections info from map_data with distances corrected by gps_fix_age
     distance_since_fix = self._v_ego * gps_fix_age
