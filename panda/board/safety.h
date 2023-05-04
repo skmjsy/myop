@@ -2,21 +2,20 @@
 
 // include the safety policies.
 #include "safety/safety_defaults.h"
-/*#include "safety/safety_honda.h"
-#include "safety/safety_toyota.h"
-#include "safety/safety_tesla.h"
+//#include "safety/safety_honda.h"
+//#include "safety/safety_toyota.h"
+//#include "safety/safety_tesla.h"
 #include "safety/safety_gm.h"
-#include "safety/safety_ford.h"*/
+//#include "safety/safety_ford.h"
 #include "safety/safety_hyundai.h"
-/*#include "safety/safety_chrysler.h"
-#include "safety/safety_subaru.h"
-#include "safety/safety_mazda.h"
-#include "safety/safety_nissan.h"
-#include "safety/safety_volkswagen_mqb.h"
-#include "safety/safety_volkswagen_pq.h"*/
+//#include "safety/safety_chrysler.h"
+//#include "safety/safety_subaru.h"
+//#include "safety/safety_mazda.h"
+//#include "safety/safety_nissan.h"
+//#include "safety/safety_volkswagen_mqb.h"
+//#include "safety/safety_volkswagen_pq.h"
 #include "safety/safety_elm327.h"
 //#include "safety/safety_body.h"
-#include "safety/safety_hyundai_community.h"
 
 // from cereal.car.CarParams.SafetyModel
 #define SAFETY_SILENT 0U
@@ -243,18 +242,10 @@ const safety_hook_config safety_hook_registry[] = {
   //{SAFETY_HONDA_NIDEC, &honda_nidec_hooks},
   //{SAFETY_TOYOTA, &toyota_hooks},
   {SAFETY_ELM327, &elm327_hooks},
-  /*{SAFETY_GM, &gm_hooks},
-  {SAFETY_HONDA_BOSCH, &honda_bosch_hooks},
-  {SAFETY_CHRYSLER, &chrysler_hooks},
-  {SAFETY_SUBARU, &subaru_hooks},
-  {SAFETY_VOLKSWAGEN_MQB, &volkswagen_mqb_hooks},
-  {SAFETY_NISSAN, &nissan_hooks},
-  {SAFETY_MAZDA, &mazda_hooks},
-  {SAFETY_BODY, &body_hooks},*/
-  {SAFETY_NOOUTPUT, &nooutput_hooks},
+  {SAFETY_GM, &gm_hooks},
   {SAFETY_HYUNDAI, &hyundai_hooks},
+  {SAFETY_NOOUTPUT, &nooutput_hooks},
   {SAFETY_HYUNDAI_LEGACY, &hyundai_legacy_hooks},
-  {SAFETY_HYUNDAI_COMMUNITY, &hyundai_community_hooks},
 #ifdef ALLOW_DEBUG
   //{SAFETY_TESLA, &tesla_hooks},
   //{SAFETY_SUBARU_LEGACY, &subaru_legacy_hooks},
@@ -284,6 +275,10 @@ int set_safety_hooks(uint16_t mode, int16_t param) {
   ts_angle_last = 0;
   desired_angle_last = 0;
   ts_last = 0;
+  ts_torque_check_last = 0;
+  ts_steer_req_mismatch_last = 0;
+  valid_steer_req_count = 0;
+  invalid_steer_req_count = 0;
 
   torque_meas.max = 0;
   torque_meas.max = 0;
@@ -350,6 +345,8 @@ bool max_limit_check(int val, const int MAX_VAL, const int MIN_VAL) {
 // check that commanded value isn't too far from measured
 bool dist_to_meas_check(int val, int val_last, struct sample_t *val_meas,
   const int MAX_RATE_UP, const int MAX_RATE_DOWN, const int MAX_ERROR) {
+  // ajouatom: 초기화가 안된경우에는 검사하지 말자.
+  if (val == 0 || val_last == 0) return false;
 
   // *** val rate limit check ***
   int highest_allowed_rl = MAX(val_last, 0) + MAX_RATE_UP;
@@ -360,6 +357,12 @@ bool dist_to_meas_check(int val, int val_last, struct sample_t *val_meas,
   int lowest_allowed = MAX(lowest_allowed_rl, MIN(val_last + MAX_RATE_DOWN, MIN(val_meas->min, 0) - MAX_ERROR));
 
   // check for violation
+  if ((val < lowest_allowed) || (val > highest_allowed)) {
+      puts("dist_to_meas_check=");
+      puth(val); puts(",");
+      puth(lowest_allowed); puts(",");
+      puth(highest_allowed); puts("\n");
+  }
   return (val < lowest_allowed) || (val > highest_allowed);
 }
 
@@ -367,6 +370,8 @@ bool dist_to_meas_check(int val, int val_last, struct sample_t *val_meas,
 bool driver_limit_check(int val, int val_last, struct sample_t *val_driver,
   const int MAX_VAL, const int MAX_RATE_UP, const int MAX_RATE_DOWN,
   const int MAX_ALLOWANCE, const int DRIVER_FACTOR) {
+  // ajouatom: 초기화가 안된경우에는 검사하지 말자.
+  if (val == 0 || val_last == 0) return false;
 
   int highest_allowed_rl = MAX(val_last, 0) + MAX_RATE_UP;
   int lowest_allowed_rl = MIN(val_last, 0) - MAX_RATE_UP;
@@ -381,6 +386,12 @@ bool driver_limit_check(int val, int val_last, struct sample_t *val_driver,
                                            MIN(driver_min_limit, 0)));
 
   // check for violation
+  if ((val < lowest_allowed) || (val > highest_allowed)) {
+      puts("driver_limit_check=");
+      puth(val); puts(",");
+      puth(lowest_allowed); puts(",");
+      puth(highest_allowed); puts("\n");
+  }
   return (val < lowest_allowed) || (val > highest_allowed);
 }
 
@@ -388,10 +399,18 @@ bool driver_limit_check(int val, int val_last, struct sample_t *val_driver,
 // real time check, mainly used for steer torque rate limiter
 bool rt_rate_limit_check(int val, int val_last, const int MAX_RT_DELTA) {
 
+  // ajouatom: 초기화가 안된경우에는 검사하지 말자.
+  if (val == 0 || val_last == 0) return false;
   // *** torque real time rate limit check ***
   int highest_val = MAX(val_last, 0) + MAX_RT_DELTA;
   int lowest_val = MIN(val_last, 0) - MAX_RT_DELTA;
 
+  if ((val < lowest_val) || (val > highest_val)) {
+      puts("rt_rate_limit=");
+      puth(val); puts(",");
+      puth(lowest_val); puts(",");
+      puth(highest_val); puts("\n");
+  }
   // check for violation
   return (val < lowest_val) || (val > highest_val);
 }
@@ -426,3 +445,96 @@ float interpolate(struct lookup_t xy, float x) {
   }
   return ret;
 }
+
+
+// Safety checks for torque-based steering commands
+bool steer_torque_cmd_checks(int desired_torque, int steer_req, const SteeringLimits limits) {
+  bool violation = false;
+  uint32_t ts = microsecond_timer_get();
+
+  if (controls_allowed) {
+    // *** global torque limit check ***
+    violation |= max_limit_check(desired_torque, limits.max_steer, -limits.max_steer);
+    if (violation) {
+        puts("max_limit_check=");
+        puth(desired_torque); puts("\n");
+    }
+
+    // *** torque rate limit check ***
+    if (limits.type == TorqueDriverLimited) {
+      violation |= driver_limit_check(desired_torque, desired_torque_last, &torque_driver,
+                                      limits.max_steer, limits.max_rate_up, limits.max_rate_down,
+                                      limits.driver_torque_allowance, limits.driver_torque_factor);
+    } else {
+      violation |= dist_to_meas_check(desired_torque, desired_torque_last, &torque_meas,
+                                      limits.max_rate_up, limits.max_rate_down, limits.max_torque_error);
+    }
+    desired_torque_last = desired_torque;
+
+    // *** torque real time rate limit check ***
+    violation |= rt_rate_limit_check(desired_torque, rt_torque_last, limits.max_rt_delta);
+
+    // every RT_INTERVAL set the new limits
+    uint32_t ts_elapsed = get_ts_elapsed(ts, ts_torque_check_last);
+    if (ts_elapsed > limits.max_rt_interval) {
+      rt_torque_last = desired_torque;
+      ts_torque_check_last = ts;
+    }
+  }
+
+  // no torque if controls is not allowed
+  if (!controls_allowed && (desired_torque != 0)) {
+    violation = true;
+  }
+
+  // certain safety modes set their steer request bit low for one or more frame at a
+  // predefined max frequency to avoid steering faults in certain situations
+  bool steer_req_mismatch = (steer_req == 0) && (desired_torque != 0);
+  if (!limits.has_steer_req_tolerance) {
+    if (steer_req_mismatch) {
+        puts("steer_req_mismatch\n");
+      violation = true;
+    }
+
+  } else {
+    if (steer_req_mismatch) {
+      if (invalid_steer_req_count == 0) {
+        // disallow torque cut if not enough recent matching steer_req messages
+        if (valid_steer_req_count < limits.min_valid_request_frames) {
+          violation = true;
+        }
+
+        // or we've cut torque too recently in time
+        uint32_t ts_elapsed = get_ts_elapsed(ts, ts_steer_req_mismatch_last);
+        if (ts_elapsed < limits.min_valid_request_rt_interval) {
+          violation = true;
+        }
+      } else {
+        // or we're cutting more frames consecutively than allowed
+        if (invalid_steer_req_count >= limits.max_invalid_request_frames) {
+          violation = true;
+        }
+      }
+
+      valid_steer_req_count = 0;
+      ts_steer_req_mismatch_last = ts;
+      invalid_steer_req_count = MIN(invalid_steer_req_count + 1, limits.max_invalid_request_frames);
+    } else {
+      valid_steer_req_count = MIN(valid_steer_req_count + 1, limits.min_valid_request_frames);
+      invalid_steer_req_count = 0;
+    }
+  }
+
+  // reset to 0 if either controls is not allowed or there's a violation
+  if (violation || !controls_allowed) {
+    valid_steer_req_count = 0;
+    invalid_steer_req_count = 0;
+    desired_torque_last = 0;
+    rt_torque_last = 0;
+    ts_torque_check_last = ts;
+    ts_steer_req_mismatch_last = ts;
+  }
+
+  return violation;
+}
+

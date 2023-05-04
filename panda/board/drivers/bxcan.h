@@ -196,13 +196,7 @@ void can_rx(uint8_t can_number) {
       to_send.bus = to_push.bus;
       to_send.data_len_code = to_push.data_len_code;
       (void)memcpy(to_send.data, to_push.data, dlc_to_len[to_push.data_len_code]);
-
-	  if (bus_fwd_num > 9) {
-        can_send(&to_send, (bus_fwd_num / 10), true);
-        can_send(&to_send, (bus_fwd_num % 10), true);
-      } else {
-        can_send(&to_send, bus_fwd_num, true);
-      }
+      can_send(&to_send, bus_fwd_num, true);
     }
 
     can_rx_errs += safety_rx_hook(&to_push) ? 0U : 1U;

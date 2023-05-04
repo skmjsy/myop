@@ -11836,6 +11836,18 @@ const Signal sigs_1322[] = {
 };
 const Signal sigs_1332[] = {
     {
+      .name = "SignalTest1",
+      .start_bit = 0,
+      .msb  = 0,
+      .lsb = 33,
+      .size = 32,
+      .is_signed = false,
+      .factor = 1,
+      .offset = 0,
+      .is_little_endian = false,
+      .type = SignalType::DEFAULT,
+    },
+    {
       .name = "OPKR_S_Dist",
       .start_bit = 15,
       .msb  = 15,
@@ -11869,6 +11881,18 @@ const Signal sigs_1332[] = {
       .factor = 1,
       .offset = 0,
       .is_little_endian = true,
+      .type = SignalType::DEFAULT,
+    },
+    {
+      .name = "SignalTest2",
+      .start_bit = 33,
+      .msb  = 33,
+      .lsb = 66,
+      .size = 32,
+      .is_signed = false,
+      .factor = 1,
+      .offset = 0,
+      .is_little_endian = false,
       .type = SignalType::DEFAULT,
     },
     {
@@ -12552,11 +12576,35 @@ const Signal sigs_1345[] = {
 };
 const Signal sigs_1348[] = {
     {
+      .name = "SignalTest1",
+      .start_bit = 0,
+      .msb  = 0,
+      .lsb = 33,
+      .size = 32,
+      .is_signed = false,
+      .factor = 1,
+      .offset = 0,
+      .is_little_endian = false,
+      .type = SignalType::DEFAULT,
+    },
+    {
       .name = "SpeedLim_Nav_Clu",
       .start_bit = 7,
       .msb  = 7,
       .lsb = 0,
       .size = 8,
+      .is_signed = false,
+      .factor = 1,
+      .offset = 0,
+      .is_little_endian = false,
+      .type = SignalType::DEFAULT,
+    },
+    {
+      .name = "SignalTest2",
+      .start_bit = 33,
+      .msb  = 33,
+      .lsb = 66,
+      .size = 32,
       .is_signed = false,
       .factor = 1,
       .offset = 0,
