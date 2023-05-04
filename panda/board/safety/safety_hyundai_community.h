@@ -23,7 +23,7 @@ const CanMsg HYUNDAI_COMMUNITY_TX_MSGS[] = {
   {1265, 0, 4}, {1265, 1, 4}, {1265, 2, 4}, // CLU11, Bus 0, 1, 2
 //  {912, 0, 7}, {912,1, 7},                  // SPAS11, Bus 0, 1
 //  {1268, 0, 8}, {1268,1, 8},                // SPAS12, Bus 0, 1
-//  {2000, 0, 8},                             // radar UDS TX addr Bus 0 (for radar disable)
+  {2000, 0, 8},                             // radar UDS TX addr Bus 0 (for radar disable)
  };
 
 // older hyundai models have less checks due to missing counters and checksums
@@ -238,6 +238,13 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send, bool longitudinal_all
     }
 
     if (violation) {
+      tx = 0;
+    }
+  }
+
+  // UDS: Only tester present ("\x02\x3E\x80\x00\x00\x00\x00\x00") allowed on diagnostics address
+  if (addr == 2000) {
+    if ((GET_BYTES_04(to_send) != 0x00803E02U) || (GET_BYTES_48(to_send) != 0x0U)) {
       tx = 0;
     }
   }
