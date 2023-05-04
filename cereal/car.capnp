@@ -503,6 +503,7 @@ struct CarParams {
 
   steerLimitAlert @28 :Bool;
   steerLimitTimer @47 :Float32;  # time before steerLimitAlert is issued
+  radarUnavailable @81 :Bool; 
 
   vEgoStopping @29 :Float32; # Speed at which the car goes into stopping state
   vEgoStarting @59 :Float32; # Speed at which the car goes into starting state
