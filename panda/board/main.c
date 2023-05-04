@@ -87,21 +87,27 @@ void set_safety_mode(uint16_t mode, int16_t param) {
 
   switch (mode_copy) {
     case SAFETY_SILENT:
-      set_intercept_relay(true);
+      // janpoo6427
+      set_intercept_relay(true); //개조차량
+      //set_intercept_relay(false);
       if (current_board->has_obd) {
         current_board->set_can_mode(CAN_MODE_NORMAL);
       }
       can_silent = ALL_CAN_SILENT;
       break;
     case SAFETY_NOOUTPUT:
-      set_intercept_relay(true);
+      // janpoo6427
+       set_intercept_relay(true); //개조차량
+      //set_intercept_relay(false);
       if (current_board->has_obd) {
         current_board->set_can_mode(CAN_MODE_NORMAL);
       }
       can_silent = ALL_CAN_LIVE;
       break;
     case SAFETY_ELM327:
-      set_intercept_relay(true);
+      // janpoo6427
+       set_intercept_relay(true); //개조차량
+      //set_intercept_relay(false);
       heartbeat_counter = 0U;
       heartbeat_lost = false;
       if (current_board->has_obd) {
@@ -214,6 +220,7 @@ void tick_handler(void) {
 
       if (!heartbeat_disabled) {
         // if the heartbeat has been gone for a while, go to SILENT safety mode and enter power save
+		// MDPS will hard fault if SAFETY_SILENT set or panda slept
         if (heartbeat_counter >= (check_started() ? HEARTBEAT_IGNITION_CNT_ON : HEARTBEAT_IGNITION_CNT_OFF)) {
           puts("device hasn't sent a heartbeat for 0x");
           puth(heartbeat_counter);
@@ -366,7 +373,7 @@ int main(void) {
 
   microsecond_timer_init();
 
-  // init to SILENT and can silent
+  // MDPS will hard fault if SAFETY_SILENT set
   set_safety_mode(SAFETY_NOOUTPUT, 0);
 
   // enable CAN TXs

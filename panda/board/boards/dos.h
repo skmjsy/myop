@@ -74,6 +74,7 @@ void dos_set_usb_power_mode(uint8_t mode) {
 }
 
 void dos_set_can_mode(uint8_t mode){
+  mode = CAN_MODE_OBD_CAN2;
   switch (mode) {
     case CAN_MODE_NORMAL:
     case CAN_MODE_OBD_CAN2:
@@ -223,5 +224,5 @@ const board board_dos = {
   .set_ir_power = dos_set_ir_power,
   .set_phone_power = unused_set_phone_power,
   .set_clock_source_mode = dos_set_clock_source_mode,
-  .set_siren = dos_set_siren
+  .set_siren = unused_set_siren
 };
