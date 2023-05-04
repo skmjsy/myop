@@ -23,7 +23,7 @@ const CanMsg HYUNDAI_COMMUNITY_TX_MSGS[] = {
   {1265, 0, 4}, {1265, 1, 4}, {1265, 2, 4}, // CLU11, Bus 0, 1, 2
 //  {912, 0, 7}, {912,1, 7},                  // SPAS11, Bus 0, 1
 //  {1268, 0, 8}, {1268,1, 8},                // SPAS12, Bus 0, 1
-  {2000, 0, 8},                             // radar UDS TX addr Bus 0 (for radar disable)
+  {2000, 0, 8}, {2000, 1, 8}, {2000, 2, 8},  // radar UDS TX addr Bus 0 (for radar disable)
  };
 
 // older hyundai models have less checks due to missing counters and checksums
@@ -31,8 +31,8 @@ AddrCheckStruct hyundai_community_addr_checks[] = {
   {.msg = {{608, 0, 8, .check_checksum = true, .max_counter = 3U, .expected_timestep = 10000U},     // EMS16
            {881, 0, 8, .expected_timestep = 10000U}, { 0 }}},                                       // E_EMS11
   {.msg = {{902, 0, 8, .expected_timestep = 20000U}, { 0 }, { 0 }}},                                // WHL_SPD11
-//  {.msg = {{916, 0, 8, .expected_timestep = 20000U}}},                                              // TCS13
-//  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}, { 0 }, { 0 }}},  // SCC12
+  //{.msg = {{916, 0, 8, .expected_timestep = 20000U}}},                                              // TCS13
+  //{.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}, { 0 }, { 0 }}},  // SCC12
 };
 
 #define HYUNDAI_COMMUNITY_ADDR_CHECK_LEN (sizeof(hyundai_community_addr_checks) / sizeof(hyundai_community_addr_checks[0]))
