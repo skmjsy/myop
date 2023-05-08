@@ -528,12 +528,12 @@ class Controls:
 
     #visionTurnControl	
     vtcState = self.sm['longitudinalPlan'].visionTurnControllerState
-    if vtcState == 1:	
-      self.events.add(EventName.visionEntering)	
-    elif vtcState == 2:	
-      self.events.add(EventName.visionTurning)	
-    elif vtcState == 3:	
-      self.events.add(EventName.visionleaving)	
+    # if vtcState == 1:	
+    #   self.events.add(EventName.visionEntering)	
+    # elif vtcState == 2:	
+    #   self.events.add(EventName.visionTurning)	
+    # elif vtcState == 3:	
+    #   self.events.add(EventName.visionleaving)	
     
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
