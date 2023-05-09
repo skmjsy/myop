@@ -659,9 +659,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert("System Overheated"),
   },
 
+  # EventName.wrongGear: {
+  #   ET.SOFT_DISABLE: user_soft_disable_alert("Gear not D"),
+  #   ET.NO_ENTRY: NoEntryAlert("Gear not D"),
+  # },
+
   EventName.wrongGear: {
-    ET.SOFT_DISABLE: user_soft_disable_alert("Gear not D"),
-    ET.NO_ENTRY: NoEntryAlert("Gear not D"),
+    ET.ENABLE: EngagementAlert(AudibleAlert.engage),
   },
 
   # This alert is thrown when the calibration angles are outside of the acceptable range.
