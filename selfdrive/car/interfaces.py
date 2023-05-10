@@ -205,7 +205,8 @@ class CarInterfaceBase(ABC):
     if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
        cs_out.gearShifter not in extra_gears):
       events.add(EventName.wrongGear)
-    # if cs_out.gearShifter == GearShifter.reverse:
+    if cs_out.gearShifter == GearShifter.reverse:
+      events.add(EventName.wrongGear)
     #   events.add(EventName.reverseGear)
     if not cs_out.cruiseState.available:
       events.add(EventName.wrongCarMode)
