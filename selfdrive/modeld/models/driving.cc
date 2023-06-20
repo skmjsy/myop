@@ -336,7 +336,7 @@ void fill_model(cereal::ModelDataV2::Builder &framed, const ModelOutput &net_out
   fill_meta(framed.initMeta(), net_outputs.meta);
 
   // stop line, added by opkr
-  //fill_stop_line(framed.initStopLine(), net_outputs.stop_lines);
+  fill_stop_line(framed.initStopLine(), net_outputs.stop_lines);
 
   // leads
   auto leads = framed.initLeadsV3(LEAD_MHP_SELECTION);
