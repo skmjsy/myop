@@ -45,15 +45,28 @@ int get_path_length_idx(const cereal::XYZTData::Reader &line, const float path_h
 }
 
 void update_leads(UIState *s, const cereal::RadarState::Reader &radar_state, const cereal::XYZTData::Reader &line) {
+    //SubMaster& sm = *(s->sm);
+    //auto lead_one = sm["modelV2"].getModelV2().getLeadsV3()[0];    
+  float max_distance = s->scene.max_distance;
+  int idx = get_path_length_idx(line, max_distance);
+  float y = line.getY()[idx];
+  float z = line.getZ()[idx];
   for (int i = 0; i < 2; ++i) {
     auto lead_data = (i == 0) ? radar_state.getLeadOne() : radar_state.getLeadTwo();
     if (lead_data.getStatus()) {
-      float z = line.getZ()[get_path_length_idx(line, lead_data.getDRel())];
+      //float z = line.getZ()[get_path_length_idx(line, lead_data.getDRel())];
+      z = line.getZ()[get_path_length_idx(line, lead_data.getDRel())];
       calib_frame_to_full_frame(s, lead_data.getDRel(), -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices[i]);
+      //calib_frame_to_full_frame(s, lead_data.getDRel(), (i == 0) ? lead_one.getY()[0] : -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices[i]);
       s->scene.lead_radar[i] = lead_data.getRadar();
+      max_distance = lead_data.getDRel();
+      y = -lead_data.getYRel();
     }
     else
       s->scene.lead_radar[i] = false;
+      
+    calib_frame_to_full_frame(s, max_distance, y - 1.2, z + 1.22, &s->scene.path_end_left_vertices[i]);
+    calib_frame_to_full_frame(s, max_distance, y + 1.2, z + 1.22, &s->scene.path_end_right_vertices[i]);
   }
 
   s->scene.lead_vertices_oncoming.clear();
@@ -63,7 +76,7 @@ void update_leads(UIState *s, const cereal::RadarState::Reader &radar_state, con
       for (auto const& l : rs) {
           lead_vertex_data vd;
           QPointF vtmp;
-          float z = line.getZ()[get_path_length_idx(line, l.getDRel())];
+          z = line.getZ()[get_path_length_idx(line, l.getDRel())];
           calib_frame_to_full_frame(s, l.getDRel(), -l.getYRel(), z + 0.61, &vtmp);
           vd.x = vtmp.x();
           vd.y = vtmp.y();
@@ -404,6 +417,7 @@ void update_model(UIState *s,
       const float lead_d = lead_one.getDRel();
       max_distance = std::clamp((float)lead_d, 0.0f, max_distance);
   }
+  scene.max_distance = max_distance;
 
   // update lane lines
   const auto lane_lines = model.getLaneLines();
@@ -724,36 +738,6 @@ void Device::resetInteractiveTimout() {
   interactive_timeout = (ignition_on ? 10 : 30) * UI_FREQ;
 }
 
-// void Device::updateBrightness(const UIState &s) {
-//   float clipped_brightness = BACKLIGHT_OFFROAD;
-//   if (s.scene.started) {
-//     // Scale to 0% to 100%
-//     clipped_brightness = 100.0 * s.scene.light_sensor;
-
-//     // CIE 1931 - https://www.photonstophotos.net/GeneralTopics/Exposure/Psychometric_Lightness_and_Gamma.htm
-//     if (clipped_brightness <= 8) {
-//       clipped_brightness = (clipped_brightness / 903.3);
-//     } else {
-//       clipped_brightness = std::pow((clipped_brightness + 16.0) / 116.0, 3.0);
-//     }
-
-//     // Scale back to 10% to 100%
-//     clipped_brightness = std::clamp(100.0f * clipped_brightness, 10.0f, 100.0f);
-//   }
-
-//   int brightness = brightness_filter.update(clipped_brightness);
-//   if (!awake) {
-//     brightness = 0;
-//   }
-
-//   if (brightness != last_brightness) {
-//     if (!brightness_future.isRunning()) {
-//       brightness_future = QtConcurrent::run(Hardware::set_brightness, brightness);
-//       last_brightness = brightness;
-//     }
-//   }
-// }
-
 void Device::updateBrightness(const UIState &s) {
   float clipped_brightness = BACKLIGHT_OFFROAD;
   if (s.scene.started) {
@@ -774,18 +758,6 @@ void Device::updateBrightness(const UIState &s) {
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
     brightness = 0;
-  }
-
-  const SubMaster &sm = *(s.sm);
-  auto controls_state = sm["controlsState"].getControlsState();
-  UIStatus status = controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
-
-  if (status == STATUS_ENGAGED) {
-    brightness = 0;
-  }
-  
-  if (controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE) {
-    brightness = brightness_filter.update(clipped_brightness);
   }
 
   if (brightness != last_brightness) {
