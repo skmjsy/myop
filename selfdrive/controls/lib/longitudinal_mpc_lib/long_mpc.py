@@ -414,9 +414,8 @@ class LongitudinalMpc:
     self.params[:,1] = self.max_a
 
     v_cruise, stop_x, self.mode = self.update_apilot(controls, carstate, radarstate, model, v_cruise, self.mode)
-    self.set_weights(prev_accel_constraint=prev_accel_constraint, v_lead0=lead_xv_0[0,1], v_lead1=lead_xv_1[0,1])
-
     self.mode = 'blended' if self.experimentalMode else self.mode
+    self.set_weights(prev_accel_constraint=prev_accel_constraint, v_lead0=lead_xv_0[0,1], v_lead1=lead_xv_1[0,1])
 
     # Update in ACC mode or ACC/e2e blend
     if self.mode == 'acc':
