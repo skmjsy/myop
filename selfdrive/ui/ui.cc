@@ -760,6 +760,18 @@ void Device::updateBrightness(const UIState &s) {
     brightness = 0;
   }
 
+  const SubMaster &sm = *(s.sm);
+  auto controls_state = sm["controlsState"].getControlsState();
+  UIStatus status = controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
+
+  if (status == STATUS_ENGAGED) {
+    brightness = 0;
+  }
+  
+  if (controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE) {
+    brightness = brightness_filter.update(clipped_brightness);
+  }
+
   if (brightness != last_brightness) {
     if (!brightness_future.isRunning()) {
       brightness_future = QtConcurrent::run(Hardware::set_brightness, brightness);
