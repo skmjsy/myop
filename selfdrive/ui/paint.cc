@@ -1,4 +1,4 @@
-﻿#include "selfdrive/ui/paint.h"
+#include "selfdrive/ui/paint.h"
 
 #include <cassert>
 #include <cmath>
@@ -763,7 +763,7 @@ void DrawApilot::drawLeadApilot(const UIState* s) {
 #ifndef __TEST
     //const cereal::ModelDataV2::LeadDataV3::Reader& lead_data = leads[0];
 #endif
-    const QPointF& vd = s->scene.lead_vertices[0];
+    //const QPointF& vd = s->scene.lead_vertices[0];
     //bool is_radar = s->scene.lead_radar[0];
     bool no_radar = leads[0].getProb() < .5;
     bool    uiDrawSteeringRotate = s->show_steer_rotate;
@@ -833,28 +833,38 @@ void DrawApilot::drawLeadApilot(const UIState* s) {
     float alpha = 0.85;
 
     int len = scene.track_vertices.length();
-    int hlen = len / 2;
+    //int hlen = len / 2;
     float _path_x = path_fx;
     float _path_y = path_fy;
     float _path_width = path_fwidth;
+    
+    float lex = scene.path_end_left_vertices[0].x();
+    float rex = scene.path_end_right_vertices[0].x();
+    float ley = scene.path_end_left_vertices[0].y();
+    float rey = scene.path_end_right_vertices[0].y();
+    _path_width = rex - lex;
+    _path_x = (lex + rex) / 2.;
+    _path_y = (ley + rey) / 2.;
+    
     if (len >= 2) {
         float lbx = scene.track_vertices[0].x();
         //float lby = scene.track_vertices[0].y();
         float rbx = scene.track_vertices[len - 1].x();
         //float rby = scene.track_vertices[len - 1].y();
-        float lex = scene.track_vertices[hlen - 1].x();
-        float ley = scene.track_vertices[hlen - 1].y();
-        float rex = scene.track_vertices[hlen].x();
-        float rey = scene.track_vertices[hlen].y();
-        _path_width = rex - lex;
-        _path_x = (lex + rex) / 2.;
-        _path_y = (ley + rey) / 2.;
+        //float lex = scene.track_vertices[hlen - 1].x();
+        //float ley = scene.track_vertices[hlen - 1].y();
+        //float rex = scene.track_vertices[hlen].x();
+        //float rey = scene.track_vertices[hlen].y();
+        //_path_width = rex - lex;
+        //_path_x = (lex + rex) / 2.;
+        //_path_y = (ley + rey) / 2.;
         path_bx = path_bx * alpha + (lbx + rbx) / 2. * (1. - alpha);
     }
-    if (radar_detected) {
-        _path_x = (int)std::clamp((float)vd.x(), 550.f, s->fb_w - 550.f);
-        _path_y = (int)std::clamp((float)vd.y(), 200.f, s->fb_h - 100.f);
-    }
+    //if (radar_detected) {
+    //    _path_x = (int)std::clamp((float)vd.x(), 550.f, s->fb_w - 550.f);
+    //    _path_y = (int)std::clamp((float)vd.y(), 200.f, s->fb_h - 100.f);
+    //}
+    _path_x = (int)std::clamp(_path_x, 550.f, s->fb_w - 550.f);
     _path_y = (int)std::clamp(_path_y, 200.f, s->fb_h - 100.f);
     if (isnan(_path_x) || isnan(_path_y) || isnan(_path_width));
     else {
