@@ -62,6 +62,7 @@ class CarController:
     self.jerkUpperLowerLimit = 12.0       
     self.speedCameraHapticEndFrame = 0
     self.hapticFeedbackWhenSpeedCamera = 0
+    self.maxAngleFrames = MAX_ANGLE_FRAMES
     self.softHoldMode = 1
     self.blinking_signal = False #아이콘 깜박이용 1Hz
     self.blinking_frame = int(1.0 / DT_CTRL)
@@ -114,6 +115,7 @@ class CarController:
     if self.frame % 100 == 0:
       self.jerkUpperLowerLimit = float(int(Params().get("JerkUpperLowerLimit", encoding="utf8")))
       self.hapticFeedbackWhenSpeedCamera = int(Params().get("HapticFeedbackWhenSpeedCamera", encoding="utf8"))
+      self.maxAngleFrames = int(Params().get("MaxAngleFrames", encoding="utf8"))
       self.softHoldMode = int(Params().get("SoftHoldMode", encoding="utf8"))
       self.steerDeltaUp = int(Params().get("SteerDeltaUp", encoding="utf8"))
       self.steerDeltaDown = int(Params().get("SteerDeltaDown", encoding="utf8"))
@@ -133,10 +135,10 @@ class CarController:
       self.angle_limit_counter = 0
 
     # Cut steer actuation bit for two frames and hold torque with induced temporary fault
-    torque_fault = CC.latActive and self.angle_limit_counter > MAX_ANGLE_FRAMES
+    torque_fault = CC.latActive and self.angle_limit_counter > self.maxAngleFrames
     lat_active = CC.latActive and not torque_fault
 
-    if self.angle_limit_counter >= MAX_ANGLE_FRAMES + MAX_ANGLE_CONSECUTIVE_FRAMES:
+    if self.angle_limit_counter >= self.maxAngleFrames + MAX_ANGLE_CONSECUTIVE_FRAMES:
       self.angle_limit_counter = 0
 
     # CAN-FD platforms
