@@ -63,7 +63,7 @@
       "edescr": "",
       "min": 0,
       "max": 1000,
-      "default": 800,
+      "default": 700,
       "unit": 1
     },
     {
@@ -169,7 +169,7 @@
       "descr": "",
       "min": 1000,
       "max": 4000,
-      "default": 2500,
+      "default": 2200,
       "unit": 1
     },
     {
@@ -189,7 +189,7 @@
       "descr": "값이크면 조향을 좀더 미리함(일반,10msec)",
       "min": 0,
       "max": 100,
-      "default": 30,
+      "default": 40,
       "unit": 1
     },
     {
@@ -199,7 +199,7 @@
       "descr": "목표속도를 일시적으로 올림",
       "min": 0,
       "max": 10,
-      "default": 4,
+      "default": 0,
       "unit": 1
     },
     {
@@ -219,7 +219,7 @@
       "descr": "",
       "min": 1,
       "max": 20,
-      "default": 3,
+      "default": 4,
       "unit": 1
     },
     {
@@ -229,7 +229,7 @@
       "descr": "",
       "min": 1,
       "max": 20,
-      "default": 7,
+      "default": 6,
       "unit": 1
     },
     {
@@ -349,7 +349,7 @@
       "descr": "낮추면 정지력증가, 가속력감소",
       "min": 10,
       "max": 100,
-      "default": 50,
+      "default": 30,
       "unit": 10
     },
     {
@@ -359,7 +359,7 @@
       "descr": "올리면 감속력 증가",
       "min": 10,
       "max": 100,
-      "default": 50,
+      "default": 60,
       "unit": 10
     },
     {
@@ -389,7 +389,7 @@
       "descr": "적으면 선행차에 대한 반응이 빨라집니다.",
       "min": 20,
       "max": 400,
-      "default": 150,
+      "default": 100,
       "unit": 10
     },
     {
@@ -709,7 +709,7 @@
       "descr": "",
       "min": 0,
       "max": 1,
-      "default": 1,
+      "default": 0,
       "unit": 1
     },
     {
