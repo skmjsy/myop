@@ -143,7 +143,8 @@ def manager_init() -> None:
     ("PathOffset", "0"),  
     ("PathCostApply", "100"),
     ("HapticFeedbackWhenSpeedCamera", "0"),       
-    ("SoftHoldMode", "1"),       
+    ("MaxAngleFrames", "89"),
+    ("SoftHoldMode", "0"),       
     ("ApplyModelDistOrder", "32"),       
     ("TrafficStopAdjustRatio", "90"),       
     ("SteeringRateCost", "700"),       
@@ -161,8 +162,8 @@ def manager_init() -> None:
     ("CruiseControlMode", "4"),
     ("CruiseOnDist", "0"),
     ("SteerRatioApply", "0"),
-    ("SteerDeltaUp", "3"),       
-    ("SteerDeltaDown", "7"),       
+    ("SteerDeltaUp", "4"),       
+    ("SteerDeltaDown", "6"),       
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
