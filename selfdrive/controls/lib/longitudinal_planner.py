@@ -116,7 +116,8 @@ class Planner:
     reset_state = long_control_state == LongCtrlState.off
 
     # No change cost when user is controlling the speed, or when standstill
-    prev_accel_constraint = not (reset_state or sm['carState'].standstill)
+    #prev_accel_constraint = not (reset_state or sm['carState'].standstill)
+    prev_accel_constraint = not sm['carState'].standstill
 
     if reset_state:
       self.v_desired_filter.x = v_ego
