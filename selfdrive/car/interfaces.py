@@ -206,7 +206,8 @@ class CarInterfaceBase(ABC):
        cs_out.gearShifter not in extra_gears):
       events.add(EventName.wrongGear)
     if cs_out.gearShifter == GearShifter.reverse:
-      events.add(EventName.reverseGear)
+      events.add(EventName.wrongGear)
+    #   events.add(EventName.reverseGear)
     if not cs_out.cruiseState.available:
       events.add(EventName.wrongCarMode)
     if cs_out.espDisabled:
